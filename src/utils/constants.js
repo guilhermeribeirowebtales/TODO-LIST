@@ -1,5 +1,13 @@
+/** Priority level definitions — keys match the store's priority_level field */
 export const PRIORITY_LEVELS = {
-  1: { id: 1, label: 'Normal', color: 'blue' },
-  2: { id: 2, label: 'High', color: 'orange' },
-  3: { id: 3, label: 'Very High', color: 'red' },
-}
+  normal: { label: "Normal", color: "default", textColor: "text-medium-emphasis" },
+  high: { label: "High", color: "orange", textColor: "text-orange" },
+  very_high: { label: "Very High", color: "red", textColor: "text-red" },
+};
+
+/** Ordered list for v-select / v-chip-group options */
+export const PRIORITY_OPTIONS = [
+  { value: "normal", label: "Normal", color: "default" },
+  { value: "high", label: "High", color: "orange" },
+  { value: "very_high", label: "Very High", color: "red" },
+];

@@ -13,6 +13,15 @@ const router = useRouter();
           TODO List
         </span>
       </v-app-bar-title>
+
+      <template #append>
+        <v-btn
+          icon="mdi-plus-circle-outline"
+          variant="text"
+          title="New Task"
+          @click="router.push({ name: 'task-new' })"
+        />
+      </template>
     </v-app-bar>
 
     <v-main>
