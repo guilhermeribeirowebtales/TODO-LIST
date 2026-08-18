@@ -32,7 +32,7 @@ function cancelDelete() {
   <v-container class="py-6">
     <!-- Task list -->
     <v-row v-if="store.activeTasks.length > 0">
-      <v-col v-for="task in store.activeTasks" :key="task.uuid" cols="12" sm="6" md="4">
+      <v-col v-for="task in store.activeTasks" :key="task.uuid" cols="12">
         <TaskCard
           :task="task"
           @toggle-done="store.toggleDone"
