@@ -1,11 +1,29 @@
-<script setup></script>
+<script setup>
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <v-app>
+    <v-app-bar color="primary" elevation="2">
+      <v-app-bar-title>
+        <span class="font-weight-bold" style="cursor: pointer" @click="router.push('/')">
+          <v-icon icon="mdi-check-circle-outline" class="mr-2" />
+          TODO List
+        </span>
+      </v-app-bar-title>
+    </v-app-bar>
+
+    <v-main>
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
-<style scoped></style>
+<style>
+html,
+body {
+  background-color: #f5f5f5;
+}
+</style>
