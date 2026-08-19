@@ -35,14 +35,16 @@
           <!-- Priority Select -->
           <v-select
             v-model="formData.priority_level"
-            :items="['Normal', 'High', 'Very High']"
+            :items="PRIORITY_OPTIONS"
+            item-title="label"
+            item-value="value"
             label="Priority Level"
             variant="outlined"
             color="primary"
             :rules="[(v) => !!v || 'Priority is required']"
             class="flex-grow-1"
             hide-details="auto"
-          ></v-select>
+          />
 
           <!-- Milestone Date -->
           <v-text-field
@@ -77,8 +79,8 @@
 
 <script setup>
 import { ref, watch, onMounted } from "vue";
+import { PRIORITY_OPTIONS } from "@/utils/constants";
 
-// Accept initial data if we are editing an existing task
 const props = defineProps({
   taskData: {
     type: Object,
@@ -86,49 +88,40 @@ const props = defineProps({
   },
 });
 
-// Emit events back to the parent view (e.g., the page holding the form)
 const emit = defineEmits(["submit", "cancel"]);
 
 const formRef = ref(null);
 const isEditing = ref(false);
 
-// Our local state for the form inputs
 const formData = ref({
   title: "",
   description: "",
-  priority_level: "Normal",
+  priority_level: "normal",
   milestone: null,
 });
 
-// Function to populate or reset the form
 const initForm = () => {
   if (props.taskData) {
     isEditing.value = true;
-    // Create a shallow copy so we don't mutate the store directly before saving
     formData.value = { ...props.taskData };
   } else {
     isEditing.value = false;
-    // Reset to defaults for a new task
     formData.value = {
       title: "",
       description: "",
-      priority_level: "Normal",
+      priority_level: "normal",
       milestone: null,
     };
   }
 };
 
-// Run when component mounts and watch for prop changes (in case the same form is reused dynamically)
 onMounted(initForm);
 watch(() => props.taskData, initForm, { deep: true });
 
-// Handle form submission
 const handleSubmit = async () => {
   const { valid } = await formRef.value.validate();
-
   if (valid) {
-    // Send the data up to the parent component to handle the Pinia store save
-    emit("submit", formData.value);
+    emit("submit", { ...formData.value });
   }
 };
 </script>

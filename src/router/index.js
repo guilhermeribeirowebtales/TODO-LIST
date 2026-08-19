@@ -12,6 +12,11 @@ const routes = [
     name: "task-new",
     component: () => import("../views/NewTaskView.vue"),
   },
+  {
+    path: "/task/:id/edit",
+    name: "task-edit",
+    component: () => import("../views/EditTaskView.vue"),
+  },
 ];
 
 const router = createRouter({
