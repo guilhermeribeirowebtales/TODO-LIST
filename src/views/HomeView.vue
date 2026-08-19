@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { useTaskStore } from "@/stores/taskStore";
 import TaskCard from "@/components/tasks/TaskCard.vue";
 import FilterBar from "@/components/tasks/FilterBar.vue";
+import AddTaskButton from "@/components/tasks/AddTaskButton.vue";
 
 const store = useTaskStore();
 
@@ -52,11 +53,14 @@ function cancelDelete() {
 <template>
   <v-container class="py-6">
     <FilterBar
-      class="mb-6"
+      class="mb-3"
       @update:search="search = $event"
       @update:filter="activeFilter = $event"
     />
 
+    <div class="d-flex justify-end mb-4">
+      <AddTaskButton />
+    </div>
     <!-- Task list -->
     <v-row v-if="visibleTasks.length > 0">
       <v-col v-for="task in visibleTasks" :key="task.uuid" cols="12">

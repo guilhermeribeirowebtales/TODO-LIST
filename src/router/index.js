@@ -7,6 +7,11 @@ const routes = [
     name: "home",
     component: HomeView,
   },
+  {
+    path: "/task/new",
+    name: "task-new",
+    component: () => import("../views/NewTaskView.vue"),
+  },
 ];
 
 const router = createRouter({
