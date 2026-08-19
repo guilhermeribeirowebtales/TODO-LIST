@@ -13,6 +13,8 @@ const filters = [
   { value: "archived", label: "Archived", icon: "mdi-archive" },
 ];
 
+// Encontrar alternativa para watch
+//
 watch(localSearch, (val) => emit("update:search", val ?? ""));
 
 function setFilter(value) {
@@ -104,7 +106,7 @@ function setFilter(value) {
 
 /* Left column — search bar centered vertically */
 .filter-bar__search {
-  width: 280px;
+  width: 400px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -124,6 +126,7 @@ function setFilter(value) {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .filter-bar__chip {
@@ -133,6 +136,7 @@ function setFilter(value) {
 .filter-bar__selects {
   display: flex;
   gap: 12px;
+  width: auto;
 }
 
 .filter-bar__selects > * {

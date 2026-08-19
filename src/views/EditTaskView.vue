@@ -8,6 +8,8 @@ const router = useRouter();
 const route = useRoute();
 const store = useTaskStore();
 
+// Computed basically means that this variable will have a value that depends on a ref or a reactive variable
+// In this case the method getById itself is a computed function because it depends on the uuid which is a ref
 const task = computed(() => store.getById(route.params.id));
 
 function handleUpdate(formData) {

@@ -55,7 +55,7 @@ function formatDate(dateStr) {
           >
             {{ task.title }}
           </span>
-          <v-chip :color="priority.color" size="x-small" variant="tonal" class="flex-shrink-0">
+          <v-chip :color="priority.color" size="x-small" variant="tonal" class="flex-shrink-0 ml-2">
             {{ priority.label }}
           </v-chip>
         </div>
