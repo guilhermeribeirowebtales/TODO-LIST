@@ -1,9 +1,30 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useTaskStore } from "@/stores/taskStore";
 import TaskCard from "@/components/tasks/TaskCard.vue";
+import FilterBar from "@/components/tasks/FilterBar.vue";
 
 const store = useTaskStore();
+
+// --- Search & filter state ---
+const search = ref("");
+const activeFilter = ref("all");
+
+const visibleTasks = computed(() => {
+  let list = activeFilter.value === "archived" ? store.archivedTasks : store.activeTasks;
+
+  if (activeFilter.value === "done") list = list.filter((t) => t.is_done);
+  if (activeFilter.value === "undone") list = list.filter((t) => !t.is_done);
+
+  if (search.value.trim()) {
+    const q = search.value.trim().toLowerCase();
+    list = list.filter(
+      (t) => t.title.toLowerCase().includes(q) || t.description?.toLowerCase().includes(q),
+    );
+  }
+
+  return list;
+});
 
 // --- Delete confirmation dialog ---
 const deleteDialog = ref(false);
@@ -30,9 +51,15 @@ function cancelDelete() {
 
 <template>
   <v-container class="py-6">
+    <FilterBar
+      class="mb-6"
+      @update:search="search = $event"
+      @update:filter="activeFilter = $event"
+    />
+
     <!-- Task list -->
-    <v-row v-if="store.activeTasks.length > 0">
-      <v-col v-for="task in store.activeTasks" :key="task.uuid" cols="12">
+    <v-row v-if="visibleTasks.length > 0">
+      <v-col v-for="task in visibleTasks" :key="task.uuid" cols="12">
         <TaskCard
           :task="task"
           @toggle-done="store.toggleDone"

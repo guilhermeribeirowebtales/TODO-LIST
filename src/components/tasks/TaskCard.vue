@@ -62,22 +62,23 @@ function formatDate(dateStr) {
 
         <p
           v-if="task.description"
-          class="text-caption text-medium-emphasis mb-0 task-card__description"
+          class="text-caption text-medium-emphasis mb-1 task-card__description"
         >
           {{ task.description }}
         </p>
-      </div>
 
-      <!-- Date chip button -->
-      <v-btn
-        :prepend-icon="task.milestone ? 'mdi-calendar-check-outline' : 'mdi-calendar-plus-outline'"
-        :text="task.milestone ? formatDate(task.milestone) : 'Set date'"
-        variant="tonal"
-        size="x-small"
-        :color="task.milestone ? 'primary' : 'default'"
-        class="task-card__date flex-shrink-0"
-        @click="emit('update-milestone', task)"
-      />
+        <v-btn
+          :prepend-icon="
+            task.milestone ? 'mdi-calendar-check-outline' : 'mdi-calendar-plus-outline'
+          "
+          :text="task.milestone ? formatDate(task.milestone) : 'Set date'"
+          variant="tonal"
+          size="x-small"
+          :color="task.milestone ? 'secundary' : 'default'"
+          class="task-card__date rounded-4xl"
+          @click="emit('update-milestone', task)"
+        />
+      </div>
 
       <!-- Right: action buttons -->
       <div class="task-card__actions flex-shrink-0">
@@ -129,14 +130,15 @@ function formatDate(dateStr) {
 
 .task-card__row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  padding: 8px 12px 8px 4px;
+  padding: 10px 12px 10px 4px;
   min-height: 56px;
 }
 
 .task-card__checkbox {
   margin: 0;
+  margin-top: 2px;
 }
 
 .task-card__content {
@@ -163,11 +165,16 @@ function formatDate(dateStr) {
 .task-card__date {
   text-transform: none;
   letter-spacing: 0;
+  width: 120px;
+  align-self: flex-start;
+  margin-top: 4px;
 }
 
 .task-card__actions {
   display: flex;
   align-items: center;
+  align-self: flex-start;
+  margin-top: 2px;
   gap: 0;
 }
 </style>
