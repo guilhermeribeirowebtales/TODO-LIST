@@ -14,6 +14,7 @@ export const useTaskStore = defineStore(
         milestone: "2026-08-19",
         priority_level: "very_high",
         order_id: 0,
+        prev_order_id: null,
         is_done: true,
         is_archived: false,
       },
@@ -24,6 +25,7 @@ export const useTaskStore = defineStore(
         milestone: null,
         priority_level: "normal",
         order_id: 1,
+        prev_order_id: null,
         is_done: true,
         is_archived: true,
       },
@@ -34,6 +36,7 @@ export const useTaskStore = defineStore(
         milestone: "2026-08-22",
         priority_level: "high",
         order_id: 2,
+        prev_order_id: null,
         is_done: false,
         is_archived: false,
       },
@@ -44,6 +47,7 @@ export const useTaskStore = defineStore(
         milestone: "2026-08-25",
         priority_level: "normal",
         order_id: 3,
+        prev_order_id: null,
         is_done: false,
         is_archived: false,
       },
@@ -54,6 +58,7 @@ export const useTaskStore = defineStore(
         milestone: "2026-08-18",
         priority_level: "normal",
         order_id: 4,
+        prev_order_id: null,
         is_done: false,
         is_archived: false,
       },
@@ -84,7 +89,7 @@ export const useTaskStore = defineStore(
       }
 
       // 2. Sort
-      // We create a shallow copy [...processedList] to avoid mutating the original array
+      // We create a shallow copy [...processedList] (the spread ... is the syntax that creats the copy ) to avoid mutating the original array
       return [...processedList].sort((a, b) => {
         if (sortBy.value === "milestone_asc") {
           if (!a.milestone) return 1; // Push nulls to the bottom
@@ -122,6 +127,9 @@ export const useTaskStore = defineStore(
     });
 
     /** Find a single task by uuid */
+    /** The getById function essentialy returns a function
+    If we removed the computed from it, it would rerun every call without caching.
+    As a computed function, its result is cached */
     const getById = computed(() => (uuid) => {
       return tasks.value.find((t) => t.uuid === uuid) ?? null;
     });
@@ -144,6 +152,7 @@ export const useTaskStore = defineStore(
         milestone,
         priority_level,
         order_id: maxOrder + 1,
+        prev_order_id: null,
         is_done: false,
         is_archived: false,
       });
@@ -157,10 +166,26 @@ export const useTaskStore = defineStore(
     }
 
     /** Toggle is_done on a task */
+    /** Added further functionality, when a task is toggled as done it puts it in last place on the array
+     * some complexity was added and a new field was also added to the data model for the task
+     * prev_order_id was added to save the the last position on the array of that task allowing
+     * the user to toggle and untoggle the tasks
+     */
     function toggleDone(uuid) {
       const task = tasks.value.find((t) => t.uuid === uuid);
       if (!task) return;
+
       task.is_done = !task.is_done;
+
+      if (task.is_done) {
+        //Finds the highest order in the array
+        const maxOrder = tasks.value.reduce((max, t) => Math.max(max, t.order_id), -1);
+
+        task.prev_order_id = task.order_id;
+        task.order_id = maxOrder + 1;
+      } else {
+        task.order_id = task.prev_order_id ?? task.order_id;
+      }
     }
 
     /** Toggle is_archived on a task */
@@ -205,5 +230,26 @@ export const useTaskStore = defineStore(
   },
   {
     persist: true, // pinia-plugin-persistedstate options passed as 3rd argument
+    //The third argument enables pinia-plugin-persistedstate,
+    //which automatically saves the store to localStorage and rehydrates on page reload.
+    //Hydration means restauring data from localStorage to active memory
+    //This works in the following way:
+    /**
+     * [Page is refreshed]
+     * │
+       ▼
+       1. Pinia starts with an empty state
+       │
+       ▼
+       2. Rehydration: The plugin reads the localStorage and injects the data saved on Pinia
+       │
+       ▼
+       3. The app keeps working with the exact same data the user left it with
+     */
+    //
   },
 );
+
+// A store is global container that holds the application shared data and business logic.
+// Acting as a single, centralized source of truth for you state (data), where your components can read and write to it.
+// Avoids prop drilling and event complexity

@@ -10,6 +10,8 @@ const store = useTaskStore();
 
 // Computed basically means that this variable will have a value that depends on a ref or a reactive variable
 // In this case the method getById itself is a computed function because it depends on the uuid which is a ref
+// The computed here also means the view will reactively update if the store's data cahnges while the form is open,
+// e.g. another tab edits the same task
 const task = computed(() => store.getById(route.params.id));
 
 function handleUpdate(formData) {
@@ -25,6 +27,8 @@ function goBack() {
 <template>
   <v-container class="py-6 d-flex justify-center">
     <!-- Task not found guard -->
+    <!-- If someone navigates directly to /task/bad-uuid/edit,
+      they get a graceful error state instead of a crash. -->
     <div
       v-if="!task"
       class="d-flex flex-column align-center justify-center mt-16 text-medium-emphasis"

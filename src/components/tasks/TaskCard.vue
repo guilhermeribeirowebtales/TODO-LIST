@@ -32,19 +32,20 @@ function formatDate(dateStr) {
     variant="outlined"
     rounded="lg"
   >
-    <div class="task-card__row">
+    <div class="task-card__row d-flex align-start ga-2">
       <!-- Left: done checkbox -->
       <v-checkbox
         :model-value="task.is_done"
         hide-details
         density="compact"
-        class="task-card__checkbox flex-shrink-0"
+        class="flex-shrink-0 ma-0"
+        style="margin-top: 2px"
         @update:model-value="emit('toggle-done', task.uuid)"
       />
 
       <!-- Center: text content -->
-      <div class="task-card__content">
-        <div class="d-flex align-center gap-2 flex-wrap">
+      <div class="task-card__content flex-grow-1 d-flex flex-column">
+        <div class="d-flex align-center ga-2 flex-wrap">
           <span
             :class="[
               'task-card__title',
@@ -75,13 +76,13 @@ function formatDate(dateStr) {
           variant="tonal"
           size="x-small"
           :color="task.milestone ? 'secundary' : 'default'"
-          class="task-card__date rounded-4xl"
+          class="task-card__date align-self-start mt-1"
           @click="emit('update-milestone', task)"
         />
       </div>
 
       <!-- Right: action buttons -->
-      <div class="task-card__actions flex-shrink-0">
+      <div class="d-flex align-center align-self-start flex-shrink-0" style="margin-top: 2px">
         <v-btn
           icon="mdi-pencil-outline"
           variant="text"
@@ -111,7 +112,6 @@ function formatDate(dateStr) {
 
 <style scoped>
 .task-card {
-  width: 100%;
   transition: box-shadow 0.2s ease;
 }
 
@@ -129,23 +129,12 @@ function formatDate(dateStr) {
 }
 
 .task-card__row {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
   padding: 10px 12px 10px 4px;
   min-height: 56px;
 }
 
-.task-card__checkbox {
-  margin: 0;
-  margin-top: 2px;
-}
-
 .task-card__content {
-  flex: 1;
-  min-width: 0; /* allows text truncation in flex children */
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
   gap: 2px;
 }
 
@@ -166,15 +155,5 @@ function formatDate(dateStr) {
   text-transform: none;
   letter-spacing: 0;
   width: 120px;
-  align-self: flex-start;
-  margin-top: 4px;
-}
-
-.task-card__actions {
-  display: flex;
-  align-items: center;
-  align-self: flex-start;
-  margin-top: 2px;
-  gap: 0;
 }
 </style>

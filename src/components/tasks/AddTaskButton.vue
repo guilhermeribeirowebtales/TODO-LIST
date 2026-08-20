@@ -10,7 +10,7 @@ const router = useRouter();
     color="primary"
     rounded="pill"
     elevation="2"
-    class="add-task-btn"
+    class="add-task-btn font-weight-semibold my-5"
     @click="router.push({ name: 'task-new' })"
   >
     New Task
@@ -21,8 +21,5 @@ const router = useRouter();
 .add-task-btn {
   text-transform: none;
   letter-spacing: 0;
-  font-weight: 600;
-  padding-inline: 20px;
-  margin: 20px 0 20px 0;
 }
 </style>

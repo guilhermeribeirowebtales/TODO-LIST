@@ -52,11 +52,8 @@ function cancelDelete() {
 
 <template>
   <v-container class="py-6">
-    <FilterBar
-      class="mb-3"
-      @update:search="search = $event"
-      @update:filter="activeFilter = $event"
-    />
+    <!-- FilterBar emits update:search and update:filter, and $event is Vue's emitted value.-->
+    <FilterBar class="mb-3" v-model:search="search" @update:filter="activeFilter = $event" />
 
     <div class="d-flex justify-end mb-4">
       <AddTaskButton />
@@ -82,6 +79,7 @@ function cancelDelete() {
     </div>
 
     <!-- Delete confirmation dialog -->
+    <!-- deleteDialog, binds to a boolean, its state defines if the modal is Open(true) or Close(false)-->
     <v-dialog v-model="deleteDialog" max-width="400">
       <v-card rounded="lg">
         <v-card-title class="text-body-1 font-weight-bold pt-5 px-5"> Delete task </v-card-title>
