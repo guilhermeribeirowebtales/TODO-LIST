@@ -12,6 +12,8 @@ const props = defineProps({
 const emit = defineEmits(["submit", "cancel"]);
 
 const formRef = ref(null);
+//isEditing now is computed therefor now its a derived state and doens't need to be written manually
+//its value updates through changes in props.taskData
 const isEditing = computed(() => !!props.taskData);
 
 const formData = ref({
@@ -23,10 +25,8 @@ const formData = ref({
 
 const initForm = () => {
   if (props.taskData) {
-    isEditing.value = true;
     formData.value = { ...props.taskData };
   } else {
-    isEditing.value = false;
     formData.value = {
       title: "",
       description: "",

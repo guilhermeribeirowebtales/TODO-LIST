@@ -64,6 +64,13 @@ export const useTaskStore = defineStore(
       },
     ]);
 
+    // --- DATA MIGRATION ---
+    // Normalize any priority_level values that were saved with incorrect casing (e.g. "Normal" → "normal").
+    // This runs once on every store init and fixes bad data already in localStorage.
+    tasks.value.forEach((t) => {
+      if (t.priority_level) t.priority_level = t.priority_level.toLowerCase();
+    });
+
     // --- FILTER & SORT STATE ---
     /** @type {import('vue').Ref<'manual'|'milestone_asc'|'milestone_desc'|'priority_asc'|'priority_desc'>} */
     const sortBy = ref("manual");
@@ -150,7 +157,7 @@ export const useTaskStore = defineStore(
         title: title || "undefined",
         description,
         milestone,
-        priority_level,
+        priority_level: priority_level.toLowerCase(),
         order_id: maxOrder + 1,
         prev_order_id: null,
         is_done: false,
@@ -162,6 +169,10 @@ export const useTaskStore = defineStore(
     function updateTask(uuid, fields) {
       const task = tasks.value.find((t) => t.uuid === uuid);
       if (!task) return;
+      // Normalize priority_level casing if present in the update payload
+      if (fields.priority_level) {
+        fields = { ...fields, priority_level: fields.priority_level.toLowerCase() };
+      }
       Object.assign(task, fields);
     }
 
@@ -214,6 +225,8 @@ export const useTaskStore = defineStore(
     return {
       // State
       tasks,
+      sortBy,
+      priorityFilter,
       // Getters
       activeTasks,
       archivedTasks,

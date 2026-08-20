@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { PRIORITY_LEVELS } from "@/utils/constants";
 
@@ -15,6 +16,26 @@ const router = useRouter();
 
 const priority = PRIORITY_LEVELS[props.task.priority_level] ?? PRIORITY_LEVELS.normal;
 
+// --- Milestone menu ---
+const menuOpen = ref(false);
+const localDate = ref(props.task.milestone ?? "");
+
+function applyDate() {
+  emit("update-milestone", { uuid: props.task.uuid, milestone: localDate.value || null });
+  menuOpen.value = false;
+}
+
+function clearDate() {
+  localDate.value = "";
+  emit("update-milestone", { uuid: props.task.uuid, milestone: null });
+  menuOpen.value = false;
+}
+
+/** Sync localDate whenever the task prop changes (e.g. store update from outside) */
+function onMenuOpen() {
+  localDate.value = props.task.milestone ?? "";
+}
+
 /** Format ISO date string to dd/mm/yyyy */
 function formatDate(dateStr) {
   if (!dateStr) return null;
@@ -26,13 +47,20 @@ function formatDate(dateStr) {
 <template>
   <v-card
     :class="[
-      'task-card',
+      'task-card ',
       { 'task-card--done': task.is_done, 'task-card--archived': task.is_archived },
     ]"
     variant="outlined"
     rounded="lg"
   >
     <div class="task-card__row d-flex align-start ga-2">
+      <!-- Draggable Icon-->
+      <v-icon
+        icon="mdi-drag"
+        class="drag-handle mr-3 text-medium-emphasis"
+        title="Drag to reorder"
+      />
+
       <!-- Left: done checkbox -->
       <v-checkbox
         :model-value="task.is_done"
@@ -68,17 +96,52 @@ function formatDate(dateStr) {
           {{ task.description }}
         </p>
 
-        <v-btn
-          :prepend-icon="
-            task.milestone ? 'mdi-calendar-check-outline' : 'mdi-calendar-plus-outline'
-          "
-          :text="task.milestone ? formatDate(task.milestone) : 'Set date'"
-          variant="tonal"
-          size="x-small"
-          :color="task.milestone ? 'secundary' : 'default'"
-          class="task-card__date align-self-start mt-1"
-          @click="emit('update-milestone', task)"
-        />
+        <!-- v-menu wraps the milestone button so clicking it opens an inline date picker.
+             :close-on-content-click="false" prevents the menu from closing when the
+             user interacts with the input inside it — we close it manually after saving.
+             @update:model-value="onMenuOpen" syncs localDate each time the menu opens
+             so it always reflects the current task.milestone value. -->
+        <v-menu
+          v-model="menuOpen"
+          :close-on-content-click="false"
+          location="bottom start"
+          @update:model-value="onMenuOpen"
+        >
+          <!-- #activator exposes the menu's open/close props to the button.
+               v-bind="activatorProps" wires up the click handler and aria attributes
+               that Vuetify needs to link the button to the menu. -->
+          <template #activator="{ props: activatorProps }">
+            <v-btn
+              v-bind="activatorProps"
+              :prepend-icon="
+                task.milestone ? 'mdi-calendar-check-outline' : 'mdi-calendar-plus-outline'
+              "
+              :text="task.milestone ? formatDate(task.milestone) : 'Set date'"
+              variant="tonal"
+              size="small"
+              :color="task.milestone ? 'default' : 'secondary'"
+              class="task-card__date align-self-start mt-1"
+              rounded="xl"
+            />
+          </template>
+
+          <!-- Menu content: a small card with a date input and action buttons -->
+          <v-card min-width="240" rounded="lg" class="pa-3">
+            <v-text-field
+              v-model="localDate"
+              type="date"
+              label="Milestone date"
+              variant="outlined"
+              density="compact"
+              hide-details
+              class="mb-3"
+            />
+            <div class="d-flex justify-end ga-2">
+              <v-btn size="small" variant="text" @click="clearDate">Clear</v-btn>
+              <v-btn size="small" color="primary" variant="tonal" @click="applyDate">Save</v-btn>
+            </div>
+          </v-card>
+        </v-menu>
       </div>
 
       <!-- Right: action buttons -->
@@ -155,5 +218,13 @@ function formatDate(dateStr) {
   text-transform: none;
   letter-spacing: 0;
   width: 120px;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
 }
 </style>

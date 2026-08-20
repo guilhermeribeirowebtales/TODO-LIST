@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useTaskStore } from "@/stores/taskStore";
+import draggable from "vuedraggable";
 import TaskCard from "@/components/tasks/TaskCard.vue";
 import FilterBar from "@/components/tasks/FilterBar.vue";
 import AddTaskButton from "@/components/tasks/AddTaskButton.vue";
@@ -25,6 +26,14 @@ const visibleTasks = computed(() => {
   }
 
   return list;
+});
+
+const draggableTasks = computed({
+  get: () => visibleTasks.value,
+  set: (newArray) => {
+    const orderedUuids = newArray.map((task) => task.uuid);
+    store.reorderTasks(orderedUuids);
+  },
 });
 
 // --- Delete confirmation dialog ---
@@ -53,24 +62,48 @@ function cancelDelete() {
 <template>
   <v-container class="py-6">
     <!-- FilterBar emits update:search and update:filter, and $event is Vue's emitted value.-->
-    <FilterBar class="mb-3" v-model:search="search" @update:filter="activeFilter = $event" />
+    <!-- v-model:sort-by and v-model:priority-filter bind directly to the store refs so
+         selecting an option in FilterBar writes straight into the store, triggering
+         applyFiltersAndSort which recomputes activeTasks/archivedTasks reactively -->
+    <FilterBar
+      class="mb-3"
+      v-model:search="search"
+      v-model:sort-by="store.sortBy"
+      v-model:priority-filter="store.priorityFilter"
+      @update:filter="activeFilter = $event"
+    />
 
     <div class="d-flex justify-end mb-4">
       <AddTaskButton />
     </div>
-    <!-- Task list -->
-    <v-row v-if="visibleTasks.length > 0">
-      <v-col v-for="task in visibleTasks" :key="task.uuid" cols="12">
-        <TaskCard
-          :task="task"
-          @toggle-done="store.toggleDone"
-          @toggle-archive="store.toggleArchive"
-          @delete="requestDelete"
-          @update-milestone="() => {}"
-        />
-      </v-col>
-    </v-row>
 
+    <!-- Task list -->
+    <!-- The previous loop v-for="task in visibleTasks" was removed since the vuedraggable
+    library already does the looping for use, so we just need to pass our array of draggableTa
+    -->
+    <template v-if="visibleTasks.length > 0">
+      <draggable
+        v-model="draggableTasks"
+        item-key="uuid"
+        class="v-row"
+        animation="200"
+        handle=".drag-handle"
+        ghost-class="ghost-card"
+        drag-class="dragging-card"
+      >
+        <template #item="{ element: task }">
+          <v-col cols="12">
+            <TaskCard
+              :task="task"
+              @toggle-done="store.toggleDone"
+              @toggle-archive="store.toggleArchive"
+              @delete="requestDelete"
+              @update-milestone="({ uuid, milestone }) => store.updateTask(uuid, { milestone })"
+            />
+          </v-col>
+        </template>
+      </draggable>
+    </template>
     <!-- Empty state -->
     <div v-else class="d-flex flex-column align-center justify-center mt-16 text-medium-emphasis">
       <v-icon icon="mdi-check-circle-outline" size="64" class="mb-4" />
@@ -97,3 +130,22 @@ function cancelDelete() {
     </v-dialog>
   </v-container>
 </template>
+
+<style scoped>
+/** This classes stylize the card ghost behind, where you see two cards one being dragged
+and other in place behind */
+/** Now we still se that but with a reduced opacity, a background tint and a border,
+so as the user is draggin we can clearly see where the card is going */
+/* The empty space left behind on the list */
+.ghost-card {
+  opacity: 0.3;
+  border: 2px dashed #999 !important;
+  background-color: rgba(0, 0, 0, 0.05); /* Slight dark tint */
+}
+
+/* The actual card attached to your mouse */
+.dragging-card > div {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2) !important;
+  cursor: grabbing !important;
+}
+</style>

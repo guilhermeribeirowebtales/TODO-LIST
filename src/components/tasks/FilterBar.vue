@@ -7,8 +7,16 @@ const localSearch = defineModel("search", {
   default: "",
   set: (val) => val ?? "",
 });
+
+// defineModel binds directly to the store refs passed via v-model:sort-by and v-model:priority-filter
+const sortBy = defineModel("sortBy", { default: "manual" });
+const priorityFilter = defineModel("priorityFilter", { default: () => [] });
+
 const activeFilter = ref("all");
 
+/** Filter mapping, assigning a value, a label and an icon if needed */
+
+//Chip Filters
 const filters = [
   { value: "all", label: "All Tasks" },
   { value: "undone", label: "To Do", icon: "mdi-format-list-bulleted" },
@@ -16,7 +24,21 @@ const filters = [
   { value: "archived", label: "Archived", icon: "mdi-archive" },
 ];
 
-//TODO: Aplicar filtros de Sort By e por prioridade
+//SortBy Filters
+const sort_filters = [
+  { title: "Default (drag & drop)", value: "manual" },
+  { title: "Priority (High to Low)", value: "priority_desc" },
+  { title: "Priority (Low to High)", value: "priority_asc" },
+  { title: "Milestone (Earliest first)", value: "milestone_asc" },
+  { title: "Milestone (Latest first)", value: "milestone_desc" },
+];
+
+//Select chip priority filters
+const priority_filters = [
+  { title: "Normal", value: "normal" },
+  { title: "High", value: "high" },
+  { title: "Very High", value: "very_high" },
+];
 
 function setFilter(value) {
   activeFilter.value = value;
@@ -60,24 +82,26 @@ function setFilter(value) {
           </v-chip>
         </div>
 
-        <div class="d-flex ga-3 filter-bar__selects">
+        <div class="d-flex ga-3 col-3 filter-bar__selects">
+          <!-- v-model binds to the sortBy defineModel, which is bound to store.sortBy in HomeView -->
           <v-select
+            v-model="sortBy"
             label="Sort By"
-            :items="[
-              'Drag and drop',
-              'Priority (High to Low)',
-              'Priority (Low to High)',
-              'Milestone (High to Low)',
-              'Milestone (Low to High)',
-            ]"
+            :items="sort_filters"
+            item-title="title"
+            item-value="value"
             variant="outlined"
             density="comfortable"
             hide-details
           />
 
+          <!-- v-model binds to priorityFilter defineModel, which is bound to store.priorityFilter in HomeView -->
           <v-select
+            v-model="priorityFilter"
             label="Priority Level"
-            :items="['Normal', 'High', 'Very High']"
+            :items="priority_filters"
+            item-title="title"
+            item-value="value"
             multiple
             clearable
             variant="outlined"
@@ -107,5 +131,6 @@ function setFilter(value) {
 .filter-bar__selects > * {
   flex-grow: 1;
   min-width: 0;
+  max-width: 50%;
 }
 </style>
