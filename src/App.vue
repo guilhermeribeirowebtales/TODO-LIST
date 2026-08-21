@@ -1,7 +1,14 @@
 <script setup>
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/authStore.js";
 
 const router = useRouter();
+const store = useAuthStore();
+
+const logout = () => {
+  store.logout();
+  router.push({ name: "login" });
+};
 </script>
 
 <template>
@@ -19,6 +26,18 @@ const router = useRouter();
           TODO List
         </span>
       </v-app-bar-title>
+
+      <!-- v-spacer pushes everything below it to the right side of the navbar -->
+      <v-spacer></v-spacer>
+
+      <div>
+        <!-- If the authStore doesn't have a jwt it shows the button to login-->
+        <v-btn v-if="!store.token" class="mr-4" to="/auth/login">Login</v-btn>
+        <!-- If it has then a user has logged in, and shows the only option he has which is to logout-->
+        <v-btn v-if="store.token" @click="logout" color="error" variant="flat" class="mr-4">
+          Logout
+        </v-btn>
+      </div>
     </v-app-bar>
 
     <v-main>

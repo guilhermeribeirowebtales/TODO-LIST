@@ -81,6 +81,16 @@ function cancelDelete() {
     <!-- The previous loop v-for="task in visibleTasks" was removed since the vuedraggable
     library already does the looping for use, so we just need to pass our array of draggableTa
     -->
+    <!-- before we had a v-row tag which we swapped for a template, this acts as an invisible wrapper
+     then we pass the v-row class to our draggable tag so we don't break the vuetify grid by having a row inside a row
+     -->
+    <!-- We also create a blueprint slot or a vue slot,
+     A slot is a render function, which compiles the <template> HTML into a js function.
+     Essential Vue reads and translates line 103 as: "Give <draggable> this block of HTML.
+      As <draggable> loops through the array, catch the item it spits out
+      (which it calls 'element'), instantly rename it to 'task',
+      and use it to build this <v-col> and <TaskCard>." -->
+
     <template v-if="visibleTasks.length > 0">
       <draggable
         v-model="draggableTasks"

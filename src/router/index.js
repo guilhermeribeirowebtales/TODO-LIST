@@ -6,22 +6,43 @@ const routes = [
     path: "/",
     name: "home",
     component: HomeView,
+    meta: { requiresAuth: true },
   },
   {
     path: "/task/new",
     name: "task-new",
     component: () => import("../views/NewTaskView.vue"),
+    meta: { requiresAuth: true },
   },
   {
     path: "/task/:id/edit",
     name: "task-edit",
     component: () => import("../views/EditTaskView.vue"), //This notation is called lazy import
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/auth/login",
+    name: "login",
+    component: () => import("../components/forms/LoginForm.vue"),
   },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+
+  // Use to.name instead of hardcoded paths
+  if (to.meta.requiresAuth && !token) {
+    next({ name: "login" }); // Sends them to /auth/login securely
+  } else if (to.name === "login" && token) {
+    next({ name: "home" });
+  } else {
+    next();
+  }
 });
 
 export default router;
