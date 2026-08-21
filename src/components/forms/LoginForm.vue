@@ -47,9 +47,9 @@ const submit = async () => {
 </script>
 
 <template>
-  <div id="app-login">
+  <div class="h-screen overflow-hidden">
     <v-app>
-      <v-main class="login-background">
+      <v-main class="login-background bg-cover bg-center">
         <!-- The background and overlay -->
         <v-container fluid class="fill-height loginOverlay">
           <v-row align="center" justify="center">
@@ -121,16 +121,9 @@ const submit = async () => {
 
 .login-background {
   background-image: url("https://images.unsplash.com/photo-1497733942558-e74c87ef89db?dpr=1&auto=compress,format&fit=crop&w=1650&h=&q=80&cs=tinysrgb&crop=");
-  background-size: cover;
-  background-position: center;
 }
 
 .loginOverlay {
   background: rgba(255, 255, 255, 0.2);
-}
-.photoCredit {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
 }
 </style>
