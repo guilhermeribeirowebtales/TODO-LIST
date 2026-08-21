@@ -6,70 +6,7 @@ export const useTaskStore = defineStore(
   () => {
     // --- STATE ---
     /** @type {import('vue').Ref<Array<{ uuid: string, title: string, description: string, milestone: string|null, priority_level: 'normal'|'high'|'very_high', order_id: number, is_done: boolean, is_archived: boolean }>>} */
-    const tasks = ref([
-      {
-        uuid: crypto.randomUUID(),
-        title: "Configurar Vue",
-        description: "Instalar Vue Router e Pinia manualmente",
-        milestone: "2026-08-19",
-        priority_level: "very_high",
-        order_id: 0,
-        prev_order_id: null,
-        is_done: true,
-        is_archived: false,
-      },
-      {
-        uuid: crypto.randomUUID(),
-        title: "Criar Mockup UI",
-        description: "Desenhar a interface base para aprovação",
-        milestone: null,
-        priority_level: "normal",
-        order_id: 1,
-        prev_order_id: null,
-        is_done: true,
-        is_archived: true,
-      },
-      {
-        uuid: crypto.randomUUID(),
-        title: "Implementar Drag and Drop",
-        description: "Adicionar lógica de ordenação manual",
-        milestone: "2026-08-22",
-        priority_level: "high",
-        order_id: 2,
-        prev_order_id: null,
-        is_done: false,
-        is_archived: false,
-      },
-      {
-        uuid: crypto.randomUUID(),
-        title: "Testar Filtros",
-        description: "Testar estados e atalho de data",
-        milestone: "2026-08-25",
-        priority_level: "normal",
-        order_id: 3,
-        prev_order_id: null,
-        is_done: false,
-        is_archived: false,
-      },
-      {
-        uuid: crypto.randomUUID(),
-        title: "Implementar Authentication",
-        description: "Make a fake database using users.json",
-        milestone: "2026-08-18",
-        priority_level: "normal",
-        order_id: 4,
-        prev_order_id: null,
-        is_done: false,
-        is_archived: false,
-      },
-    ]);
-
-    // --- DATA MIGRATION ---
-    // Normalize any priority_level values that were saved with incorrect casing (e.g. "Normal" → "normal").
-    // This runs once on every store init and fixes bad data already in localStorage.
-    tasks.value.forEach((t) => {
-      if (t.priority_level) t.priority_level = t.priority_level.toLowerCase();
-    });
+    const tasks = ref([]);
 
     // --- FILTER & SORT STATE ---
     /** @type {import('vue').Ref<'manual'|'milestone_asc'|'milestone_desc'|'priority_asc'|'priority_desc'>} */
@@ -78,7 +15,13 @@ export const useTaskStore = defineStore(
     /** @type {import('vue').Ref<Array<'normal'|'high'|'very_high'>>} */
     const priorityFilter = ref([]); // Empty array means "show all"
 
+    //Passar a logica de filtragem para a store
+    //Assim sempre que ha filtragem ela é executada na store e a lista vem da store
+
     // --- HELPERS ---
+    //Alterar niveis para 1,2,3 e adicionar labels
+    //Mas pensando em escalabilidade, se eu quiser adicionar um novo filtro mais a frente
+    // nao tenho numeros para tal, ou seja melhor ser 1,5,10
     const priorityWeights = {
       very_high: 3,
       high: 2,
@@ -137,9 +80,12 @@ export const useTaskStore = defineStore(
     /** The getById function essentialy returns a function
     If we removed the computed from it, it would rerun every call without caching.
     As a computed function, its result is cached */
-    const getById = computed(() => (uuid) => {
+
+    //Removed computed because there is no reactivity from this function
+    //TODO: Understanding when to use computed and reactivity
+    const getTaskById = (uuid) => {
       return tasks.value.find((t) => t.uuid === uuid) ?? null;
-    });
+    };
 
     /** Find all the done Tasks */
     const completedTasks = computed(() => {
@@ -166,13 +112,18 @@ export const useTaskStore = defineStore(
     }
 
     /** Update fields of an existing task by uuid */
+    //Possibilidade de ao inves fazer toggleDone e toggleArchive, passar um value numa função num botao
+    //e fazer um update do objeto, assim reciclando o metodo
     function updateTask(uuid, fields) {
-      const task = tasks.value.find((t) => t.uuid === uuid);
+      let task = tasks.value.find((t) => t.uuid === uuid);
       if (!task) return;
+
       // Normalize priority_level casing if present in the update payload
-      if (fields.priority_level) {
-        fields = { ...fields, priority_level: fields.priority_level.toLowerCase() };
-      }
+      // if (fields.priority_level) {
+      //   fields = { ...fields, priority_level: fields.priority_level.toLowerCase() };
+      // }
+      // task = { ...task, ...fields };
+
       Object.assign(task, fields);
     }
 
@@ -185,18 +136,7 @@ export const useTaskStore = defineStore(
     function toggleDone(uuid) {
       const task = tasks.value.find((t) => t.uuid === uuid);
       if (!task) return;
-
       task.is_done = !task.is_done;
-
-      if (task.is_done) {
-        //Finds the highest order in the array
-        const maxOrder = tasks.value.reduce((max, t) => Math.max(max, t.order_id), -1);
-
-        task.prev_order_id = task.order_id;
-        task.order_id = maxOrder + 1;
-      } else {
-        task.order_id = task.prev_order_id ?? task.order_id;
-      }
     }
 
     /** Toggle is_archived on a task */
@@ -222,6 +162,13 @@ export const useTaskStore = defineStore(
       });
     }
 
+    // Alternativa ao vuedraggable
+    // Onde eu estou a passar uma lista de ids ordenados
+    //Se forem a lista completa, ok, mas tbm enviou uma lista de ids filtrados
+    // essa lista pode so ter 2 tasks, e assim fica apenas com duas posições
+    //erroneamente filtrando mal as tasks relativamente ao array de tasks completo
+    // optar por um approach de deteção de evento e swap entre as tasks alteradas
+
     return {
       // State
       tasks,
@@ -231,7 +178,7 @@ export const useTaskStore = defineStore(
       activeTasks,
       archivedTasks,
       completedTasks,
-      getById,
+      getTaskById,
       // Actions
       addTask,
       updateTask,

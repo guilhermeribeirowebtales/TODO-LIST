@@ -15,7 +15,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/task/:id/edit",
+    path: "/task/:id/edit", //Alterar url e colocar campos variaveis ou de id no final
     name: "task-edit",
     component: () => import("../views/EditTaskView.vue"), //This notation is called lazy import
     meta: { requiresAuth: true },
@@ -31,6 +31,9 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+//Verificar se o token expirou com a chave publica etc
+//porque e possivel colocar um token qualquer e entrar
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");

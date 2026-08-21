@@ -5,6 +5,7 @@ export const PRIORITY_LEVELS = {
   very_high: { label: "Very High", color: "red", textColor: "text-red" },
 };
 
+/** CODIGO REPETIDO */
 /** Ordered list for v-select / v-chip-group options */
 export const PRIORITY_OPTIONS = [
   { value: "normal", label: "Normal", color: "default" },

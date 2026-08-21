@@ -10,6 +10,8 @@ const store = useTaskStore();
 
 // --- Search & filter state ---
 const search = ref("");
+
+//______ REFAZER CODIGO ________
 const activeFilter = ref("all");
 
 const visibleTasks = computed(() => {
@@ -28,9 +30,12 @@ const visibleTasks = computed(() => {
   return list;
 });
 
+//_____________________________
+
 const draggableTasks = computed({
   get: () => visibleTasks.value,
   set: (newArray) => {
+    console.log(newArray);
     const orderedUuids = newArray.map((task) => task.uuid);
     store.reorderTasks(orderedUuids);
   },
@@ -40,6 +45,7 @@ const draggableTasks = computed({
 const deleteDialog = ref(false);
 const taskToDelete = ref(null);
 
+//Alterar nome de função para melhor compreensão do codigo
 function requestDelete(task) {
   taskToDelete.value = task;
   deleteDialog.value = true;

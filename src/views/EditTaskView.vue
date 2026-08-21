@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+//import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useTaskStore } from "@/stores/taskStore";
 import TaskForm from "@/components/forms/TaskForm.vue";
@@ -12,7 +12,7 @@ const store = useTaskStore();
 // In this case the method getById itself is a computed function because it depends on the uuid which is a ref
 // The computed here also means the view will reactively update if the store's data cahnges while the form is open,
 // e.g. another tab edits the same task
-const task = computed(() => store.getById(route.params.id));
+const task = store.getTaskById(route.params.id);
 
 function handleUpdate(formData) {
   store.updateTask(route.params.id, formData);

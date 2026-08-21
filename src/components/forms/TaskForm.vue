@@ -36,15 +36,20 @@ const initForm = () => {
   }
 };
 
+//initForm();
+
 //onMounted is a function that registeres a callback function as soon as
 // the component, and all of its synchronous child components,
 // have been rendered and inserted into the DOM
-onMounted(initForm);
+onMounted(() => {
+  initForm();
+});
 
 //watch here is correct, and can't be replaced by a computed
 //because the form needs a mutable local state.
 //computed would make formData read-only.
 
+//Ainda assim verificar uma forma
 watch(() => props.taskData, initForm, { deep: true });
 
 const handleSubmit = async () => {

@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
+//To fix: remove localStorage and save token on pinia persisted state like in the taskStore
+
 export const useAuthStore = defineStore("auth", () => {
   // 1. Reads the jwt token from local storage on startup (keeps user logged in after refresh)
   const token = ref(localStorage.getItem("token") || null);

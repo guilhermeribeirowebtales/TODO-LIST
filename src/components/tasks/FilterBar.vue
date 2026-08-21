@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
 
+// Tirar partido da Store neste ficheiro
+
 const emit = defineEmits(["update:filter"]);
 
 const localSearch = defineModel("search", {
@@ -26,18 +28,18 @@ const filters = [
 
 //SortBy Filters
 const sort_filters = [
-  { title: "Default (drag & drop)", value: "manual" },
-  { title: "Priority (High to Low)", value: "priority_desc" },
-  { title: "Priority (Low to High)", value: "priority_asc" },
-  { title: "Milestone (Earliest first)", value: "milestone_asc" },
-  { title: "Milestone (Latest first)", value: "milestone_desc" },
+  { label: "Default (drag & drop)", value: "manual" },
+  { label: "Priority (High to Low)", value: "priority_desc" },
+  { label: "Priority (Low to High)", value: "priority_asc" },
+  { label: "Milestone (Earliest first)", value: "milestone_asc" },
+  { label: "Milestone (Latest first)", value: "milestone_desc" },
 ];
 
 //Select chip priority filters
 const priority_filters = [
-  { title: "Normal", value: "normal" },
-  { title: "High", value: "high" },
-  { title: "Very High", value: "very_high" },
+  { label: "Normal", value: "normal" },
+  { label: "High", value: "high" },
+  { label: "Very High", value: "very_high" },
 ];
 
 function setFilter(value) {
@@ -88,7 +90,7 @@ function setFilter(value) {
             v-model="sortBy"
             label="Sort By"
             :items="sort_filters"
-            item-title="title"
+            item-title="label"
             item-value="value"
             variant="outlined"
             density="comfortable"
@@ -100,7 +102,7 @@ function setFilter(value) {
             v-model="priorityFilter"
             label="Priority Level"
             :items="priority_filters"
-            item-title="title"
+            item-title="label"
             item-value="value"
             multiple
             clearable
