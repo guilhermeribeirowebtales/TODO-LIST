@@ -1,39 +1,16 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useTaskStore } from "@/stores/taskStore";
 import draggable from "vuedraggable";
 import TaskCard from "@/components/tasks/TaskCard.vue";
 import FilterBar from "@/components/tasks/FilterBar.vue";
 import AddTaskButton from "@/components/tasks/AddTaskButton.vue";
+import { ref } from "vue";
 
 const store = useTaskStore();
 
-// --- Search & filter state ---
-const search = ref("");
-
-//______ REFAZER CODIGO ________
-const activeFilter = ref("all");
-
-const visibleTasks = computed(() => {
-  let list = activeFilter.value === "archived" ? store.archivedTasks : store.activeTasks;
-
-  if (activeFilter.value === "done") list = list.filter((t) => t.is_done);
-  if (activeFilter.value === "undone") list = list.filter((t) => !t.is_done);
-
-  if (search.value.trim()) {
-    const q = search.value.trim().toLowerCase();
-    list = list.filter(
-      (t) => t.title.toLowerCase().includes(q) || t.description?.toLowerCase().includes(q),
-    );
-  }
-
-  return list;
-});
-
-//_____________________________
-
 const draggableTasks = computed({
-  get: () => visibleTasks.value,
+  get: () => store.visibleTasks,
   set: (newArray) => {
     console.log(newArray);
     const orderedUuids = newArray.map((task) => task.uuid);
@@ -45,8 +22,7 @@ const draggableTasks = computed({
 const deleteDialog = ref(false);
 const taskToDelete = ref(null);
 
-//Alterar nome de função para melhor compreensão do codigo
-function requestDelete(task) {
+function openDeleteDialog(task) {
   taskToDelete.value = task;
   deleteDialog.value = true;
 }
@@ -97,7 +73,7 @@ function cancelDelete() {
       (which it calls 'element'), instantly rename it to 'task',
       and use it to build this <v-col> and <TaskCard>." -->
 
-    <template v-if="visibleTasks.length > 0">
+    <template v-if="draggableTasks.length > 0">
       <draggable
         v-model="draggableTasks"
         item-key="uuid"
@@ -113,7 +89,7 @@ function cancelDelete() {
               :task="task"
               @toggle-done="store.toggleDone"
               @toggle-archive="store.toggleArchive"
-              @delete="requestDelete"
+              @delete="openDeleteDialog"
               @update-milestone="({ uuid, milestone }) => store.updateTask(uuid, { milestone })"
             />
           </v-col>

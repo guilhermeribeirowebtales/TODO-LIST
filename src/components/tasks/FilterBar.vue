@@ -1,20 +1,7 @@
 <script setup>
-import { ref } from "vue";
+import { useTaskStore } from "@/stores/taskStore";
 
-// Tirar partido da Store neste ficheiro
-
-const emit = defineEmits(["update:filter"]);
-
-const localSearch = defineModel("search", {
-  default: "",
-  set: (val) => val ?? "",
-});
-
-// defineModel binds directly to the store refs passed via v-model:sort-by and v-model:priority-filter
-const sortBy = defineModel("sortBy", { default: "manual" });
-const priorityFilter = defineModel("priorityFilter", { default: () => [] });
-
-const activeFilter = ref("all");
+const store = useTaskStore();
 
 /** Filter mapping, assigning a value, a label and an icon if needed */
 
@@ -41,11 +28,6 @@ const priority_filters = [
   { label: "High", value: "high" },
   { label: "Very High", value: "very_high" },
 ];
-
-function setFilter(value) {
-  activeFilter.value = value;
-  emit("update:filter", value);
-}
 </script>
 
 <template>
@@ -58,7 +40,7 @@ function setFilter(value) {
       <!-- Left column: search -->
       <div class="w-50 d-flex align-center flex-shrink-0">
         <v-text-field
-          v-model="localSearch"
+          v-model="store.search"
           prepend-inner-icon="mdi-magnify"
           label="Search tasks..."
           variant="outlined"
@@ -76,18 +58,18 @@ function setFilter(value) {
             v-for="f in filters"
             :key="f.value"
             :prepend-icon="f.icon"
-            :variant="activeFilter === f.value ? 'tonal' : 'outlined'"
-            :color="activeFilter === f.value ? 'primary' : undefined"
-            @click="setFilter(f.value)"
+            :variant="store.activeFilter === f.value ? 'tonal' : 'outlined'"
+            :color="store.activeFilter === f.value ? 'primary' : undefined"
+            @click="store.activeFilter = f.value"
           >
             {{ f.label }}
           </v-chip>
         </div>
 
         <div class="d-flex ga-3 col-3 filter-bar__selects">
-          <!-- v-model binds to the sortBy defineModel, which is bound to store.sortBy in HomeView -->
+          <!-- v-model binds directly to store.sortBy -->
           <v-select
-            v-model="sortBy"
+            v-model="store.sortBy"
             label="Sort By"
             :items="sort_filters"
             item-title="label"
@@ -97,9 +79,9 @@ function setFilter(value) {
             hide-details
           />
 
-          <!-- v-model binds to priorityFilter defineModel, which is bound to store.priorityFilter in HomeView -->
+          <!-- v-model binds directly to store.priorityFilter -->
           <v-select
-            v-model="priorityFilter"
+            v-model="store.priorityFilter"
             label="Priority Level"
             :items="priority_filters"
             item-title="label"

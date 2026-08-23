@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
 import HomeView from "../views/HomeView.vue";
 
 const routes = [
@@ -36,12 +37,13 @@ const router = createRouter({
 //porque e possivel colocar um token qualquer e entrar
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem("token");
+  const authStore = useAuthStore();
+  const token = authStore.token;
+  const isValid = authStore.verifyToken(token);
 
-  // Use to.name instead of hardcoded paths
-  if (to.meta.requiresAuth && !token) {
-    next({ name: "login" }); // Sends them to /auth/login securely
-  } else if (to.name === "login" && token) {
+  if (to.meta.requiresAuth && !token && !isValid) {
+    next({ name: "login" });
+  } else if (to.name === "login" && token && isValid) {
     next({ name: "home" });
   } else {
     next();

@@ -1,37 +1,84 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, reactive, computed } from "vue";
 
-//To fix: remove localStorage and save token on pinia persisted state like in the taskStore
+export const useAuthStore = defineStore(
+  "auth",
+  () => {
+    const token = ref(null);
+    const user = ref({});
+    const isAuthenticated = ref(false);
+    const location = reactive({});
 
-export const useAuthStore = defineStore("auth", () => {
-  // 1. Reads the jwt token from local storage on startup (keeps user logged in after refresh)
-  const token = ref(localStorage.getItem("token") || null);
+    async function login(username, password) {
+      const response = await fetch("http://localhost:8787/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-  // Login function
-  async function login(username, password) {
-    //8787 port is where my worker is running
-    const response = await fetch("http://localhost:8787/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
 
-    if (!response.ok) {
-      throw new Error("Login failed");
+      const data = await response.json();
+
+      // Just update the state. The plugin automatically syncs this to localStorage!
+      setToken(data.token);
+      setAuthenticated();
     }
 
-    const data = await response.json();
+    const getRole = computed(() => user?.value?.role || "");
 
-    // Save token to state and browser storage
-    token.value = data.token;
-    localStorage.setItem("token", data.token);
-  }
+    const setToken = (accessToken) => {
+      token.value = accessToken;
+    };
 
-  // 3. The Logout Function
-  function logout() {
-    token.value = null;
-    localStorage.removeItem("token");
-  }
+    const setAuthenticated = (user) => {
+      isAuthenticated.value = user;
+    };
 
-  return { token, login, logout };
-});
+    const cleanUser = () => {
+      isAuthenticated.value = false;
+      user.value = null;
+      token.value = null;
+    };
+
+    const getToken = computed(() => token.value);
+
+    const verifyToken = () => {
+      if (!token.value) return false;
+
+      try {
+        // A JWT is 3 parts separated by dots. The payload is the 2nd part.
+        const payloadBase64 = token.value.split(".")[1];
+        const decodedJson = atob(payloadBase64); // Decode base64
+        const payload = JSON.parse(decodedJson);
+
+        // JWT exp is in seconds, Date.now() is in milliseconds
+        const isExpired = Date.now() >= payload.exp * 1000;
+
+        return !isExpired; // If it's NOT expired, it is valid!
+      } catch (error) {
+        // If the token is malformed, it's invalid
+        return false;
+      }
+    };
+
+    return {
+      isAuthenticated,
+      setToken,
+      user,
+      location,
+      token,
+      setAuthenticated,
+      cleanUser,
+      getRole,
+      getToken,
+      login,
+      verifyToken,
+    };
+  },
+  {
+    persist: true,
+  },
+);

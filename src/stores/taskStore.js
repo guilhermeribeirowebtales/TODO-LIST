@@ -15,8 +15,11 @@ export const useTaskStore = defineStore(
     /** @type {import('vue').Ref<Array<'normal'|'high'|'very_high'>>} */
     const priorityFilter = ref([]); // Empty array means "show all"
 
-    //Passar a logica de filtragem para a store
-    //Assim sempre que ha filtragem ela é executada na store e a lista vem da store
+    /** @type {import('vue').Ref<'all'|'done'|'undone'|'archived'>} */
+    const activeFilter = ref("all");
+
+    /** @type {import('vue').Ref<string>} */
+    const search = ref("");
 
     // --- HELPERS ---
     //Alterar niveis para 1,2,3 e adicionar labels
@@ -74,6 +77,23 @@ export const useTaskStore = defineStore(
     const archivedTasks = computed(() => {
       const archived = tasks.value.filter((t) => t.is_archived);
       return applyFiltersAndSort(archived);
+    });
+
+    /** The final task list for the home view, driven by activeFilter and search */
+    const visibleTasks = computed(() => {
+      let list = activeFilter.value === "archived" ? archivedTasks.value : activeTasks.value;
+
+      if (activeFilter.value === "done") list = list.filter((t) => t.is_done);
+      if (activeFilter.value === "undone") list = list.filter((t) => !t.is_done);
+
+      if (search.value.trim()) {
+        const q = search.value.trim().toLowerCase();
+        list = list.filter(
+          (t) => t.title.toLowerCase().includes(q) || t.description?.toLowerCase().includes(q),
+        );
+      }
+
+      return list;
     });
 
     /** Find a single task by uuid */
@@ -174,9 +194,12 @@ export const useTaskStore = defineStore(
       tasks,
       sortBy,
       priorityFilter,
+      activeFilter,
+      search,
       // Getters
       activeTasks,
       archivedTasks,
+      visibleTasks,
       completedTasks,
       getTaskById,
       // Actions
