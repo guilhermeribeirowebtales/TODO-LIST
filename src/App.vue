@@ -6,7 +6,7 @@ const router = useRouter();
 const store = useAuthStore();
 
 const logout = () => {
-  store.logout();
+  store.cleanUser();
   router.push({ name: "login" });
 };
 </script>

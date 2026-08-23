@@ -63,6 +63,10 @@ const handleSubmit = async () => {
 <template>
   <v-card class="pa-4" elevation="2" max-width="600" width="100%">
     <!-- Dynamic Header -->
+    <router-link to="/"
+      ><v-btn color="primary" prepend-icon="mdi-arrow-left" variant="text"> Back </v-btn>
+    </router-link>
+
     <v-card-title class="text-h5 font-weight-bold mb-4 text-primary">
       {{ isEditing ? "Edit Task" : "Create a new task" }}
     </v-card-title>
@@ -97,37 +101,40 @@ const handleSubmit = async () => {
         ></v-textarea>
 
         <!-- Priority and Date Side-by-Side -->
-        <div class="d-flex flex-column flex-sm-row gap-4 mb-4">
-          <!-- Priority Select -->
-          <v-select
-            v-model="formData.priority_level"
-            :items="PRIORITY_OPTIONS"
-            item-title="label"
-            item-value="value"
-            label="Priority Level"
-            variant="outlined"
-            color="primary"
-            :rules="[(v) => !!v || 'Priority is required']"
-            class="flex-grow-1"
-            hide-details="auto"
-          />
+        <v-row class="mb-4">
+          <!-- Priority Select: Takes up 12 columns on mobile, 6 columns on small screens and up -->
+          <v-col cols="12" sm="6">
+            <v-select
+              v-model="formData.priority_level"
+              :items="PRIORITY_OPTIONS"
+              item-title="label"
+              item-value="value"
+              label="Priority Level"
+              variant="outlined"
+              color="primary"
+              :rules="[(v) => !!v || 'Priority is required']"
+              hide-details="auto"
+            />
+          </v-col>
 
-          <!-- Milestone Date -->
-          <v-text-field
-            v-model="formData.milestone"
-            label="Milestone Date"
-            type="date"
-            variant="outlined"
-            color="primary"
-            clearable
-            class="flex-grow-1"
-            hide-details="auto"
-          ></v-text-field>
-        </div>
-
+          <!-- Milestone Date: Takes up exactly the other half -->
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model="formData.milestone"
+              label="Milestone Date"
+              type="date"
+              variant="outlined"
+              color="primary"
+              clearable
+              hide-details="auto"
+            ></v-text-field>
+          </v-col>
+        </v-row>
         <!-- Action Buttons -->
         <v-card-actions class="d-flex justify-end px-0 mt-4">
-          <v-btn color="grey-darken-1" variant="text" @click="$emit('cancel')"> Cancel </v-btn>
+          <v-btn color="grey-darken-1" variant="text" prepend-icon="mdi-broom" @click="initForm()">
+            Limpar
+          </v-btn>
 
           <v-btn
             color="primary"

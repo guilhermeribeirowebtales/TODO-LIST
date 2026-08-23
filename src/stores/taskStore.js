@@ -116,11 +116,12 @@ export const useTaskStore = defineStore(
     // --- ACTIONS ---
     /** Add a new task */
     function addTask({ title, description = "", milestone = null, priority_level = "normal" }) {
+      let trimedTitle = title.trim();
       const maxOrder = tasks.value.reduce((max, t) => Math.max(max, t.order_id), -1);
 
       tasks.value.push({
         uuid: crypto.randomUUID(),
-        title: title || "undefined",
+        title: trimedTitle || "undefined",
         description,
         milestone,
         priority_level: priority_level.toLowerCase(),
