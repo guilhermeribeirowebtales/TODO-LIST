@@ -1,6 +1,10 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import { DefaultApolloClient } from '@vue/apollo-composable'
+import { apolloClient } from './apollo'
+
+
 
 import App from "./App.vue";
 import router from "./router";
@@ -10,6 +14,9 @@ const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
 const app = createApp(App);
+
+app.provide(DefaultApolloClient, apolloClient)
+
 
 app.use(pinia);
 app.use(router);

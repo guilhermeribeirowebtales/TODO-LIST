@@ -1,5 +1,18 @@
 import { defineStore } from "pinia";
 import { ref, reactive, computed } from "vue";
+import gql from "graphql-tag";
+import { apolloClient } from "../apollo";
+
+const LOGIN_MUTATION = gql`
+  mutation Login($input: LoginInput!) {
+  login(input: $input) {
+    token
+    user {
+      id
+    }
+  }
+}
+`;
 
 export const useAuthStore = defineStore(
   "auth",
@@ -8,23 +21,36 @@ export const useAuthStore = defineStore(
     const user = ref({});
     const isAuthenticated = ref(false);
     const location = reactive({});
+    const loginLoading = ref(false);
+    const loginError = ref(null);
 
     async function login(username, password) {
-      const response = await fetch("http://localhost:8787/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      loginLoading.value = true;
+      loginError.value = null;
 
-      if (!response.ok) {
-        throw new Error("Login failed");
+      try {
+        const { data } = await apolloClient.mutate({
+          mutation: LOGIN_MUTATION,
+          variables: { input: { username, password } },
+          fetchPolicy: "no-cache",
+        });
+
+        if (!data?.login?.token) {
+          throw new Error("Login failed");
+        }
+
+        setToken(data.login.token);
+        setAuthenticated(true);
+
+        if (data.login.user) {
+          user.value = data.login.user;
+        }
+      } catch (e) {
+        loginError.value = e;
+        throw e;
+      } finally {
+        loginLoading.value = false;
       }
-
-      const data = await response.json();
-
-      // Just update the state. The plugin automatically syncs this to localStorage!
-      setToken(data.token);
-      setAuthenticated();
     }
 
     const getRole = computed(() => user?.value?.role || "");
@@ -33,8 +59,8 @@ export const useAuthStore = defineStore(
       token.value = accessToken;
     };
 
-    const setAuthenticated = (user) => {
-      isAuthenticated.value = user;
+    const setAuthenticated = (value) => {
+      isAuthenticated.value = value;
     };
 
     const cleanUser = () => {
@@ -75,6 +101,8 @@ export const useAuthStore = defineStore(
       getRole,
       getToken,
       login,
+      loginLoading,
+      loginError,
       verifyToken,
     };
   },
