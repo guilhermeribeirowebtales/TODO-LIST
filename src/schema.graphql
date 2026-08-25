@@ -1,0 +1,2 @@
+"The root schema.graphql is only used in production as a pre-built cache:
+So in dev (which is what you're running now), it's ignored entirely."

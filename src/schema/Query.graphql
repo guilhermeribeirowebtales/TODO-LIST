@@ -1,0 +1,8 @@
+type Query {
+  mock_query: String
+  getTasks: [Task] @auth #Returns an array of Tasks
+  getTask(id: ID!): Task @auth #Requires and ID and returns a single Task
+}
+
+# Mutation.graphql: Define o que existe — quais campos, que argumentos aceitam, que tipo devolvem
+#Aqui definimos o cabeçalho das funções, como um ficheiro .h em C

@@ -1,0 +1,361 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2023-04-10T17:31:57.302Z",
+  "__export_source": "insomnia.desktop.app:v2023.1.0",
+  "resources": [
+    {
+      "_id": "req_960548a01be44f869ea8b6b28564e197",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1681146522671,
+      "created": 1680965758236,
+      "url": "{{ _.base_url }}/all/keys",
+      "name": "all keys",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "id": "pair_a61e372150b245a8be0d76a0ddbdb910",
+          "name": "authorization",
+          "value": "{{ _.authorization }}",
+          "description": ""
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1680965758236,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "wrk_44e94552200541468cb6dd23fef4d596",
+      "parentId": null,
+      "modified": 1680965749913,
+      "created": 1680965749913,
+      "name": "TODO WOrker",
+      "description": "",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "req_48735a390ade4db982fb37e4ad920a4f",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1681146863410,
+      "created": 1680969239280,
+      "url": "{{ _.base_url }}/auth/token",
+      "name": "create token",
+      "description": "",
+      "method": "POST",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_8c0b8106956d409b9608070f008340e7",
+          "name": "name",
+          "value": "Miguel Franco",
+          "description": "",
+          "disabled": false
+        },
+        {
+          "id": "pair_b94011fca577465a8de13520b856876d",
+          "name": "email",
+          "value": "miguel.franco@webtales.fr",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "headers": [
+        {
+          "id": "pair_96f6123c784f41f18b04f2be598d323f",
+          "name": "",
+          "value": "",
+          "description": ""
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1680965758211,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_3a52eebc3a9d4d5197f526374bddb8b1",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1681147666437,
+      "created": 1680966503908,
+      "url": "{{ _.base_url }}/task",
+      "name": "create task",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"description\": \"task 2\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "id": "pair_4303693b7d3c4d56af125f078be485cd",
+          "name": "Authorization",
+          "value": "{{ _.authorization }}",
+          "description": "",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_bc68c2d9d80a4826b2e2daef04544975"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1680965758186,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_c348edcf9a57476bb588e6841752dc5e",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1681146988879,
+      "created": 1680991274951,
+      "url": "{{ _.base_url }}/task/4822dc65-0b72-40b0-a475-89918abac5a6",
+      "name": "update task",
+      "description": "",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"description\": \"teste\",\n\t\"test\": 123\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "id": "pair_4303693b7d3c4d56af125f078be485cd",
+          "name": "Authorization",
+          "value": "{{ _.authorization }}",
+          "description": "",
+          "disabled": false
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_bc68c2d9d80a4826b2e2daef04544975"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1679433319463.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_547611e16a6d43e1a02546d8ba27e25e",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1681147018031,
+      "created": 1680991887528,
+      "url": "{{ _.base_url }}/task/4822dc65-0b72-40b0-a475-89918abac5a6",
+      "name": "delete task",
+      "description": "",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "id": "pair_4303693b7d3c4d56af125f078be485cd",
+          "name": "Authorization",
+          "value": "{{ _.authorization }}",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1678667100102.25,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_b9d1129d52974b61a4a8932eae9226bb",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1680992416076,
+      "created": 1680992410158,
+      "url": "{{ _.base_url }}/all/tasks",
+      "name": "delete all tasks",
+      "description": "",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "id": "pair_4303693b7d3c4d56af125f078be485cd",
+          "name": "Authorization",
+          "value": "{{ _.authorization }}",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1678283990421.625,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_12cb2f7bd14f4fe2934d2411829954d7",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1681146980056,
+      "created": 1680992526250,
+      "url": "{{ _.base_url }}/task/4822dc65-0b72-40b0-a475-89918abac5a6",
+      "name": "get task",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "id": "pair_4303693b7d3c4d56af125f078be485cd",
+          "name": "Authorization",
+          "value": "{{ _.authorization }}",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1678092435581.3125,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_be76121215b24643ba82e0d12c014787",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1680971513460,
+      "created": 1680971144284,
+      "url": "{{ _.base_url }}/tasks",
+      "name": "get all tasks",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "id": "pair_4303693b7d3c4d56af125f078be485cd",
+          "name": "Authorization",
+          "value": "{{ _.authorization }}",
+          "description": "",
+          "disabled": false
+        },
+        {
+          "id": "pair_c9417b48e5954849849e4213ee2bf49b",
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": ""
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1677900880741,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "env_9aa714e67922d5dc14f04b58dfe51092e3d599bf",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1681147771000,
+      "created": 1680965749922,
+      "name": "Base Environment",
+      "data": {
+        "authorization": "{% response 'body', 'req_48735a390ade4db982fb37e4ad920a4f', 'b64::JC50b2tlbg==::46b', 'no-history', 60 %}"
+      },
+      "dataPropertyOrder": { "&": ["authorization"] },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1680965749922,
+      "_type": "environment"
+    },
+    {
+      "_id": "jar_9aa714e67922d5dc14f04b58dfe51092e3d599bf",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1680965749923,
+      "created": 1680965749923,
+      "name": "Default Jar",
+      "cookies": [],
+      "_type": "cookie_jar"
+    },
+    {
+      "_id": "spc_97ea6c30cf954a14b1083ebaa2a390c7",
+      "parentId": "wrk_44e94552200541468cb6dd23fef4d596",
+      "modified": 1680965749913,
+      "created": 1680965749913,
+      "fileName": "TODO WOrker",
+      "contents": "",
+      "contentType": "yaml",
+      "_type": "api_spec"
+    },
+    {
+      "_id": "env_394d756cc9c44ce29aa4b2f69698fce1",
+      "parentId": "env_9aa714e67922d5dc14f04b58dfe51092e3d599bf",
+      "modified": 1681147530352,
+      "created": 1680993231202,
+      "name": "Online environment",
+      "data": { "base_url": "https://to-do-api.webtales.workers.dev/api" },
+      "dataPropertyOrder": { "&": ["base_url"] },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1680993231202,
+      "_type": "environment"
+    },
+    {
+      "_id": "env_252e988752aa4caa8730bc7371277ba7",
+      "parentId": "env_9aa714e67922d5dc14f04b58dfe51092e3d599bf",
+      "modified": 1681147565729,
+      "created": 1680993268394,
+      "name": "Localhost",
+      "data": { "base_url": "http://127.0.0.1:8787/api" },
+      "dataPropertyOrder": { "&": ["base_url"] },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1680993268394,
+      "_type": "environment"
+    }
+  ]
+}

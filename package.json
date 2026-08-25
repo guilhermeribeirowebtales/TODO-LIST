@@ -1,0 +1,36 @@
+{
+  "name": "todo-challenge-api",
+  "version": "1.0.0",
+  "description": "GraphQL API Simple Boilerplate to start the TODO Challenge.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WebTales/todo-challenge-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WebTales/todo-challenge-api/issues"
+  },
+  "homepage": "https://github.com/WebTales/todo-challenge-api#readme",
+  "dependencies": {
+    "@apollo/datasource-rest": "^6.0.1",
+    "@apollo/server": "^4.6.0",
+    "apollo-datasource-rest": "^3.7.0",
+    "graphql": "^16.6.0",
+    "graphql-tools": "^8.3.19",
+    "graphql-type-json": "^0.3.2",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "nodemonConfig": {
+    "ext": "js, graphql, json"
+  }
+}

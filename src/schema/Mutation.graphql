@@ -1,0 +1,11 @@
+type Mutation {
+    mock_mutation(name: String): String
+    createTask(description: String!): Task @auth
+    updateTask(id: ID!, description: String): Task @auth
+    deleteTask(id: ID!): String @auth
+    deleteAllTasks: String @auth
+    login(username: String!, password: String!): AuthPayload
+}
+
+# Mutation.graphql: Define o que existe — quais campos, que argumentos aceitam, que tipo devolvem
+#Aqui definimos o cabeçalho das funções, como um ficheiro .h em C

@@ -1,0 +1,2 @@
+directive @date(format: String = "dd/MM/yyyy") on FIELD_DEFINITION
+directive @auth on FIELD_DEFINITION
