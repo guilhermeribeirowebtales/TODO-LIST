@@ -86,6 +86,7 @@ export const useAuthStore = defineStore(
         return !isExpired; // If it's NOT expired, it is valid!
       } catch (error) {
         // If the token is malformed, it's invalid
+        console.warn("Token verification failed:", error.message);
         return false;
       }
     };
