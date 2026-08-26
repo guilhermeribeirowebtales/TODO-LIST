@@ -1,51 +1,3 @@
-<script setup>
-import { ref } from "vue";
-import { useAuthStore } from "@/stores/authStore"; // Your Pinia store
-import { useRouter } from "vue-router";
-
-const auth = useAuthStore();
-const router = useRouter();
-
-// UI State
-const formRef = ref(null);
-const isFormValid = ref(false);
-const showPassword = ref(false);
-const loading = ref(false);
-const errorMsg = ref("");
-
-// Form Data
-const username = ref("");
-const password = ref("");
-
-// Validation Rules
-const usernameRules = [(v) => !!v || "Username is required"];
-const passwordRules = [(v) => !!v || "Password is required"];
-
-// Submit Logic
-const submit = async () => {
-  // 1. Trigger Vuetify 3 Form Validation
-  const { valid } = await formRef.value.validate();
-
-  if (valid) {
-    loading.value = true;
-    errorMsg.value = "";
-
-    try {
-      // 2. Send data to Cloudflare Worker
-      await auth.login(username.value, password.value);
-
-      // 3. Success! Send them to the dashboard
-      router.push({ name: "home" });
-      alert("Success! You are logged in.");
-    } catch (err) {
-      errorMsg.value = "Invalid username or password.";
-    } finally {
-      loading.value = false;
-    }
-  }
-};
-</script>
-
 <template>
   <div class="h-screen overflow-hidden">
     <v-app>
@@ -112,6 +64,54 @@ const submit = async () => {
     </v-app>
   </div>
 </template>
+
+<script setup>
+import { ref } from "vue";
+import { useAuthStore } from "@/stores/authStore"; // Your Pinia store
+import { useRouter } from "vue-router";
+
+const auth = useAuthStore();
+const router = useRouter();
+
+// UI State
+const formRef = ref(null);
+const isFormValid = ref(false);
+const showPassword = ref(false);
+const loading = ref(false);
+const errorMsg = ref("");
+
+// Form Data
+const username = ref("");
+const password = ref("");
+
+// Validation Rules
+const usernameRules = [(v) => !!v || "Username is required"];
+const passwordRules = [(v) => !!v || "Password is required"];
+
+// Submit Logic
+const submit = async () => {
+  // 1. Trigger Vuetify 3 Form Validation
+  const { valid } = await formRef.value.validate();
+
+  if (valid) {
+    loading.value = true;
+    errorMsg.value = "";
+
+    try {
+      // 2. Send data to Cloudflare Worker
+      await auth.login(username.value, password.value);
+
+      // 3. Success! Send them to the dashboard
+      router.push({ name: "home" });
+      alert("Success! You are logged in.");
+    } catch (err) {
+      errorMsg.value = "Invalid username or password.";
+    } finally {
+      loading.value = false;
+    }
+  }
+};
+</script>
 
 <style scoped>
 #app-login {

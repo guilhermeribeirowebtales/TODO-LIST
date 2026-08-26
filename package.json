@@ -2,7 +2,7 @@
   "name": "todo-list-worker",
   "type": "module",
   "scripts": {
-    "dev": "npm run build:frontend && wrangler dev",
+    "dev": "wrangler pages dev --port 8787 -- npm run dev:frontend",
     "build:frontend": "cd frontend && npm run build",
     "deploy": "npm run build:frontend && wrangler deploy",
     "dev:frontend": "cd frontend && npm run dev",

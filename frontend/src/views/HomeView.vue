@@ -1,46 +1,3 @@
-<script setup>
-import { computed } from "vue";
-import { useTaskStore } from "@/stores/taskStore";
-import draggable from "vuedraggable";
-import TaskCard from "@/components/tasks/TaskCard.vue";
-import FilterBar from "@/components/tasks/FilterBar.vue";
-import AddTaskButton from "@/components/tasks/AddTaskButton.vue";
-import { ref } from "vue";
-
-const store = useTaskStore();
-
-const draggableTasks = computed({
-  get: () => store.visibleTasks,
-  set: (newArray) => {
-    console.log(newArray);
-    const orderedUuids = newArray.map((task) => task.uuid);
-    store.reorderTasks(orderedUuids);
-  },
-});
-
-// --- Delete confirmation dialog ---
-const deleteDialog = ref(false);
-const taskToDelete = ref(null);
-
-function openDeleteDialog(task) {
-  taskToDelete.value = task;
-  deleteDialog.value = true;
-}
-
-function confirmDelete() {
-  if (taskToDelete.value) {
-    store.deleteTask(taskToDelete.value.uuid);
-  }
-  deleteDialog.value = false;
-  taskToDelete.value = null;
-}
-
-function cancelDelete() {
-  deleteDialog.value = false;
-  taskToDelete.value = null;
-}
-</script>
-
 <template>
   <v-container class="py-6">
     <!-- FilterBar emits update:search and update:filter, and $event is Vue's emitted value.-->
@@ -122,6 +79,49 @@ function cancelDelete() {
     </v-dialog>
   </v-container>
 </template>
+
+<script setup>
+import { computed } from "vue";
+import { useTaskStore } from "@/stores/taskStore";
+import draggable from "vuedraggable";
+import TaskCard from "@/components/tasks/TaskCard.vue";
+import FilterBar from "@/components/tasks/FilterBar.vue";
+import AddTaskButton from "@/components/tasks/AddTaskButton.vue";
+import { ref } from "vue";
+
+const store = useTaskStore();
+
+const draggableTasks = computed({
+  get: () => store.visibleTasks,
+  set: (newArray) => {
+    console.log(newArray);
+    const orderedUuids = newArray.map((task) => task.uuid);
+    store.reorderTasks(orderedUuids);
+  },
+});
+
+// --- Delete confirmation dialog ---
+const deleteDialog = ref(false);
+const taskToDelete = ref(null);
+
+function openDeleteDialog(task) {
+  taskToDelete.value = task;
+  deleteDialog.value = true;
+}
+
+function confirmDelete() {
+  if (taskToDelete.value) {
+    store.deleteTask(taskToDelete.value.uuid);
+  }
+  deleteDialog.value = false;
+  taskToDelete.value = null;
+}
+
+function cancelDelete() {
+  deleteDialog.value = false;
+  taskToDelete.value = null;
+}
+</script>
 
 <style scoped>
 /** This classes stylize the card ghost behind, where you see two cards one being dragged

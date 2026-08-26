@@ -1,9 +1,3 @@
-<script setup>
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-</script>
-
 <template>
   <v-btn
     prepend-icon="mdi-plus"
@@ -16,6 +10,12 @@ const router = useRouter();
     New Task
   </v-btn>
 </template>
+
+<script setup>
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+</script>
 
 <style scoped>
 .add-task-btn {

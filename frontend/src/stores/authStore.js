@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, reactive, computed } from "vue";
+import { ref } from "vue";
 import gql from "graphql-tag";
 import { apolloClient } from "../apollo";
 
@@ -20,7 +20,7 @@ export const useAuthStore = defineStore(
     const token = ref(null);
     const user = ref({});
     const isAuthenticated = ref(false);
-    const location = reactive({});
+    //const location = reactive({}); --> Dead Code
     const loginLoading = ref(false);
     const loginError = ref(null);
 
@@ -39,8 +39,8 @@ export const useAuthStore = defineStore(
           throw new Error("Login failed");
         }
 
-        setToken(data.login.token);
-        setAuthenticated(true);
+        //setToken(data.login.token);
+        ///setAuthenticated(true);
 
         if (data.login.user) {
           user.value = data.login.user;
@@ -53,15 +53,15 @@ export const useAuthStore = defineStore(
       }
     }
 
-    const getRole = computed(() => user?.value?.role || "");
+    //const getRole = computed(() => user?.value?.role || ""); --> Dead code
 
-    const setToken = (accessToken) => {
-      token.value = accessToken;
-    };
+    // const setToken = (accessToken) => {
+    //   token.value = accessToken;
+    // };
 
-    const setAuthenticated = (value) => {
-      isAuthenticated.value = value;
-    };
+    // const setAuthenticated = (value) => {
+    //   isAuthenticated.value = value;
+    // };
 
     const cleanUser = () => {
       isAuthenticated.value = false;
@@ -69,7 +69,7 @@ export const useAuthStore = defineStore(
       token.value = null;
     };
 
-    const getToken = computed(() => token.value);
+    //const getToken = computed(() => token.value); --> Dead code
 
     const verifyToken = () => {
       if (!token.value) return false;
@@ -92,14 +92,14 @@ export const useAuthStore = defineStore(
 
     return {
       isAuthenticated,
-      setToken,
+      //setToken,
       user,
       location,
       token,
-      setAuthenticated,
+      //setAuthenticated,
       cleanUser,
-      getRole,
-      getToken,
+      //getRole,
+      //getToken,
       login,
       loginLoading,
       loginError,

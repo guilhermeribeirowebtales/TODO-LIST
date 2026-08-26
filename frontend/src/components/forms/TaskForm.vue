@@ -1,65 +1,3 @@
-<script setup>
-import { ref, watch, onMounted, computed } from "vue";
-import { PRIORITY_OPTIONS } from "@/utils/constants";
-
-const props = defineProps({
-  taskData: {
-    type: Object,
-    default: () => null,
-  },
-});
-
-const emit = defineEmits(["submit", "cancel"]);
-
-const formRef = ref(null);
-//isEditing now is computed therefor now its a derived state and doens't need to be written manually
-//its value updates through changes in props.taskData
-const isEditing = computed(() => !!props.taskData);
-
-const formData = ref({
-  title: "",
-  description: "",
-  priority_level: "normal",
-  milestone: null,
-});
-
-const initForm = () => {
-  if (props.taskData) {
-    formData.value = { ...props.taskData };
-  } else {
-    formData.value = {
-      title: "",
-      description: "",
-      priority_level: "normal",
-      milestone: null,
-    };
-  }
-};
-
-//initForm();
-
-//onMounted is a function that registeres a callback function as soon as
-// the component, and all of its synchronous child components,
-// have been rendered and inserted into the DOM
-onMounted(() => {
-  initForm();
-});
-
-//watch here is correct, and can't be replaced by a computed
-//because the form needs a mutable local state.
-//computed would make formData read-only.
-
-//Ainda assim verificar uma forma
-watch(() => props.taskData, initForm, { deep: true });
-
-const handleSubmit = async () => {
-  const { valid } = await formRef.value.validate();
-  if (valid) {
-    emit("submit", { ...formData.value });
-  }
-};
-</script>
-
 <template>
   <v-card class="pa-4" elevation="2" max-width="600" width="100%">
     <!-- Dynamic Header -->
@@ -149,3 +87,65 @@ const handleSubmit = async () => {
     </v-card-text>
   </v-card>
 </template>
+
+<script setup>
+import { ref, watch, onMounted, computed } from "vue";
+import { PRIORITY_OPTIONS } from "@/utils/constants";
+
+const props = defineProps({
+  taskData: {
+    type: Object,
+    default: () => null,
+  },
+});
+
+const emit = defineEmits(["submit", "cancel"]);
+
+const formRef = ref(null);
+//isEditing now is computed therefor now its a derived state and doens't need to be written manually
+//its value updates through changes in props.taskData
+const isEditing = computed(() => !!props.taskData);
+
+const formData = ref({
+  title: "",
+  description: "",
+  priority_level: "normal",
+  milestone: null,
+});
+
+const initForm = () => {
+  if (props.taskData) {
+    formData.value = { ...props.taskData };
+  } else {
+    formData.value = {
+      title: "",
+      description: "",
+      priority_level: "normal",
+      milestone: null,
+    };
+  }
+};
+
+//initForm();
+
+//onMounted is a function that registeres a callback function as soon as
+// the component, and all of its synchronous child components,
+// have been rendered and inserted into the DOM
+onMounted(() => {
+  initForm();
+});
+
+//watch here is correct, and can't be replaced by a computed
+//because the form needs a mutable local state.
+//computed would make formData read-only.
+
+//Ainda assim verificar uma forma
+watch(() => props.taskData, initForm, { deep: true });
+
+const handleSubmit = async () => {
+  const { valid } = await formRef.value.validate();
+  if (valid) {
+    emit("submit", { ...formData.value });
+  }
+};
+</script>

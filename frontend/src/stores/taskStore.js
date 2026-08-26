@@ -68,16 +68,16 @@ export const useTaskStore = defineStore(
 
     // --- GETTERS ---
     /** Active tasks (not archived), filtered and sorted */
-    const activeTasks = computed(() => {
-      const active = tasks.value.filter((t) => !t.is_archived);
-      return applyFiltersAndSort(active);
-    });
+    // const activeTasks = computed(() => {
+    //   const active = tasks.value.filter((t) => !t.is_archived);
+    //   return applyFiltersAndSort(active);
+    // });
 
-    /** Archived tasks, filtered and sorted */
-    const archivedTasks = computed(() => {
-      const archived = tasks.value.filter((t) => t.is_archived);
-      return applyFiltersAndSort(archived);
-    });
+    // /** Archived tasks, filtered and sorted */
+    // const archivedTasks = computed(() => {
+    //   const archived = tasks.value.filter((t) => t.is_archived);
+    //   return applyFiltersAndSort(archived);
+    // });
 
     /** The final task list for the home view, driven by activeFilter and search */
     const visibleTasks = computed(() => {
@@ -108,10 +108,10 @@ export const useTaskStore = defineStore(
     };
 
     /** Find all the done Tasks */
-    const completedTasks = computed(() => {
-      const done = tasks.value.filter((t) => t.is_done);
-      return applyFiltersAndSort(done);
-    });
+    // const completedTasks = computed(() => {
+    //   const done = tasks.value.filter((t) => t.is_done);
+    //   return applyFiltersAndSort(done);
+    // });
 
     // --- ACTIONS ---
     /** Add a new task */
@@ -198,10 +198,10 @@ export const useTaskStore = defineStore(
       activeFilter,
       search,
       // Getters
-      activeTasks,
-      archivedTasks,
+      //activeTasks,
+      //archivedTasks,
       visibleTasks,
-      completedTasks,
+      //completedTasks,
       getTaskById,
       // Actions
       addTask,

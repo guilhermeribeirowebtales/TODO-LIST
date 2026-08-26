@@ -1,35 +1,3 @@
-<script setup>
-import { useTaskStore } from "@/stores/taskStore";
-
-const store = useTaskStore();
-
-/** Filter mapping, assigning a value, a label and an icon if needed */
-
-//Chip Filters
-const filters = [
-  { value: "all", label: "All Tasks" },
-  { value: "undone", label: "To Do", icon: "mdi-format-list-bulleted" },
-  { value: "done", label: "Done", icon: "mdi-check" },
-  { value: "archived", label: "Archived", icon: "mdi-archive" },
-];
-
-//SortBy Filters
-const sort_filters = [
-  { label: "Default (drag & drop)", value: "manual" },
-  { label: "Priority (High to Low)", value: "priority_desc" },
-  { label: "Priority (Low to High)", value: "priority_asc" },
-  { label: "Milestone (Earliest first)", value: "milestone_asc" },
-  { label: "Milestone (Latest first)", value: "milestone_desc" },
-];
-
-//Select chip priority filters
-const priority_filters = [
-  { label: "Normal", value: "normal" },
-  { label: "High", value: "high" },
-  { label: "Very High", value: "very_high" },
-];
-</script>
-
 <template>
   <v-card
     class="pa-5 my-10 bg-surface"
@@ -104,6 +72,38 @@ const priority_filters = [
     </div>
   </v-card>
 </template>
+
+<script setup>
+import { useTaskStore } from "@/stores/taskStore";
+
+const store = useTaskStore();
+
+/** Filter mapping, assigning a value, a label and an icon if needed */
+
+//Chip Filters
+const filters = [
+  { value: "all", label: "All Tasks" },
+  { value: "undone", label: "To Do", icon: "mdi-format-list-bulleted" },
+  { value: "done", label: "Done", icon: "mdi-check" },
+  { value: "archived", label: "Archived", icon: "mdi-archive" },
+];
+
+//SortBy Filters
+const sort_filters = [
+  { label: "Default (drag & drop)", value: "manual" },
+  { label: "Priority (High to Low)", value: "priority_desc" },
+  { label: "Priority (Low to High)", value: "priority_asc" },
+  { label: "Milestone (Earliest first)", value: "milestone_asc" },
+  { label: "Milestone (Latest first)", value: "milestone_desc" },
+];
+
+//Select chip priority filters
+const priority_filters = [
+  { label: "Normal", value: "normal" },
+  { label: "High", value: "high" },
+  { label: "Very High", value: "very_high" },
+];
+</script>
 
 <style scoped>
 /* min-width: 0 has no Vuetify utility but is required to prevent

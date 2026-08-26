@@ -3,8 +3,4 @@
   "name": "todo-list-worker",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-20",
-  "assets": {
-    "directory": "./dist",
-    "not_found_handling": "single-page-application"
-  }
 }

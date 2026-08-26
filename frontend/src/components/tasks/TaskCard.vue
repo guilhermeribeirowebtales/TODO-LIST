@@ -1,49 +1,3 @@
-<script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { PRIORITY_LEVELS } from "@/utils/constants";
-
-const props = defineProps({
-  task: {
-    type: Object,
-    required: true,
-  },
-});
-
-const emit = defineEmits(["toggle-done", "toggle-archive", "delete", "update-milestone"]);
-
-const router = useRouter();
-
-const priority = PRIORITY_LEVELS[props.task.priority_level] ?? PRIORITY_LEVELS.normal;
-
-// --- Milestone menu ---
-const menuOpen = ref(false);
-const localDate = ref(props.task.milestone ?? "");
-
-function applyDate() {
-  emit("update-milestone", { uuid: props.task.uuid, milestone: localDate.value || null });
-  menuOpen.value = false;
-}
-
-function clearDate() {
-  localDate.value = "";
-  emit("update-milestone", { uuid: props.task.uuid, milestone: null });
-  menuOpen.value = false;
-}
-
-/** Sync localDate whenever the task prop changes (e.g. store update from outside) */
-function onMenuOpen() {
-  localDate.value = props.task.milestone ?? "";
-}
-
-/** Format ISO date string to dd/mm/yyyy */
-function formatDate(dateStr) {
-  if (!dateStr) return null;
-  const [year, month, day] = dateStr.split("-");
-  return `${day}/${month}/${year}`;
-}
-</script>
-
 <template>
   <v-card
     :class="[
@@ -172,6 +126,52 @@ function formatDate(dateStr) {
     </div>
   </v-card>
 </template>
+
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { PRIORITY_LEVELS } from "@/utils/constants";
+
+const props = defineProps({
+  task: {
+    type: Object,
+    required: true,
+  },
+});
+
+const emit = defineEmits(["toggle-done", "toggle-archive", "delete", "update-milestone"]);
+
+const router = useRouter();
+
+const priority = PRIORITY_LEVELS[props.task.priority_level] ?? PRIORITY_LEVELS.normal;
+
+// --- Milestone menu ---
+const menuOpen = ref(false);
+const localDate = ref(props.task.milestone ?? "");
+
+function applyDate() {
+  emit("update-milestone", { uuid: props.task.uuid, milestone: localDate.value || null });
+  menuOpen.value = false;
+}
+
+function clearDate() {
+  localDate.value = "";
+  emit("update-milestone", { uuid: props.task.uuid, milestone: null });
+  menuOpen.value = false;
+}
+
+/** Sync localDate whenever the task prop changes (e.g. store update from outside) */
+function onMenuOpen() {
+  localDate.value = props.task.milestone ?? "";
+}
+
+/** Format ISO date string to dd/mm/yyyy */
+function formatDate(dateStr) {
+  if (!dateStr) return null;
+  const [year, month, day] = dateStr.split("-");
+  return `${day}/${month}/${year}`;
+}
+</script>
 
 <style scoped>
 .task-card {

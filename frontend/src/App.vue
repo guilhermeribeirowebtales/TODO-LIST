@@ -1,21 +1,9 @@
-<script setup>
-import { useRouter } from "vue-router";
-import { useAuthStore } from "@/stores/authStore.js";
-
-const router = useRouter();
-const store = useAuthStore();
-
-const logout = () => {
-  store.cleanUser();
-  router.push({ name: "login" });
-};
-</script>
-
 <template>
   <v-app>
     <!-- v-app-bar is a sticky bar on top of our page, the color is primary which is defined on our vuetify.js
     and the elevation prop is a value that goes from 0 to 24, and adds a dropshadow
     -->
+
 
     <v-app-bar color="primary" elevation="2">
       <!-- This is a title specialized slot that handles responsive truncation and positioning
@@ -45,3 +33,16 @@ const logout = () => {
     </v-main>
   </v-app>
 </template>
+
+<script setup>
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/authStore.js";
+
+const router = useRouter();
+const store = useAuthStore();
+
+const logout = () => {
+  store.cleanUser();
+  router.push({ name: "login" });
+};
+</script>

@@ -1,3 +1,10 @@
+<template>
+  <v-container class="py-6 d-flex justify-center">
+    <!-- Drop in the reusable form we created earlier -->
+    <TaskForm @submit="handleCreate" @cancel="goBack" />
+  </v-container>
+</template>
+
 <script setup>
 import { useRouter } from "vue-router";
 import { useTaskStore } from "@/stores/taskStore";
@@ -20,10 +27,3 @@ function goBack() {
   router.push({ name: "home" });
 }
 </script>
-
-<template>
-  <v-container class="py-6 d-flex justify-center">
-    <!-- Drop in the reusable form we created earlier -->
-    <TaskForm @submit="handleCreate" @cancel="goBack" />
-  </v-container>
-</template>
