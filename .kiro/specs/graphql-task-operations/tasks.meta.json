@@ -1,0 +1,153 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Rewrite `frontend/src/apollo.ts` to use an Apollo Link chain with `setContext` auth link": [
+      {
+        "executionId": "afe63fc1-6eae-434b-930f-c873f70d9264",
+        "chatSessionId": "sess_e091fa5d-280b-4512-81c6-3a1b162e87b9",
+        "timestamp": 1787752885091
+      },
+      {
+        "executionId": "afe63fc1-6eae-434b-930f-c873f70d9264",
+        "chatSessionId": "sess_e091fa5d-280b-4512-81c6-3a1b162e87b9",
+        "timestamp": 1787753038947
+      }
+    ],
+    "1.2 Create `frontend/src/graphql/tasks.ts` with all GraphQL operation documents": [
+      {
+        "executionId": "afe63fc1-6eae-434b-930f-c873f70d9264",
+        "chatSessionId": "sess_e091fa5d-280b-4512-81c6-3a1b162e87b9",
+        "timestamp": 1787752886184
+      },
+      {
+        "executionId": "afe63fc1-6eae-434b-930f-c873f70d9264",
+        "chatSessionId": "sess_e091fa5d-280b-4512-81c6-3a1b162e87b9",
+        "timestamp": 1787753039989
+      }
+    ],
+    "1. Configure Apollo Client with Auth Link Chain": [
+      {
+        "executionId": "afe63fc1-6eae-434b-930f-c873f70d9264",
+        "chatSessionId": "sess_e091fa5d-280b-4512-81c6-3a1b162e87b9",
+        "timestamp": 1787753040018
+      }
+    ],
+    "2.1 Add loading and error state to the task store": [
+      {
+        "executionId": "dd5efe3c-7b2a-4f0c-9d10-9ade4b4caed7",
+        "chatSessionId": "sess_2c6fc8e7-d540-4bbd-8e74-2dd84441207e",
+        "timestamp": 1787753190587
+      },
+      {
+        "executionId": "dd5efe3c-7b2a-4f0c-9d10-9ade4b4caed7",
+        "chatSessionId": "sess_2c6fc8e7-d540-4bbd-8e74-2dd84441207e",
+        "timestamp": 1787753307527
+      }
+    ],
+    "2.2 Implement error classification and auth error handling": [
+      {
+        "executionId": "109c5606-8f8b-4c24-85ea-08aee8f9d724",
+        "chatSessionId": "sess_60d1b7f3-3e55-4142-a9bf-df8d71e941eb",
+        "timestamp": 1787753589944
+      },
+      {
+        "executionId": "109c5606-8f8b-4c24-85ea-08aee8f9d724",
+        "chatSessionId": "sess_60d1b7f3-3e55-4142-a9bf-df8d71e941eb",
+        "timestamp": 1787754089274
+      }
+    ],
+    "2.3 Implement `fetchTasks()` action": [
+      {
+        "executionId": "109c5606-8f8b-4c24-85ea-08aee8f9d724",
+        "chatSessionId": "sess_60d1b7f3-3e55-4142-a9bf-df8d71e941eb",
+        "timestamp": 1787754097758
+      },
+      {
+        "executionId": "109c5606-8f8b-4c24-85ea-08aee8f9d724",
+        "chatSessionId": "sess_60d1b7f3-3e55-4142-a9bf-df8d71e941eb",
+        "timestamp": 1787754191013
+      }
+    ],
+    "2.4 Implement `addTask()` action with GraphQL mutation": [
+      {
+        "executionId": "109c5606-8f8b-4c24-85ea-08aee8f9d724",
+        "chatSessionId": "sess_60d1b7f3-3e55-4142-a9bf-df8d71e941eb",
+        "timestamp": 1787754098627
+      },
+      {
+        "executionId": "109c5606-8f8b-4c24-85ea-08aee8f9d724",
+        "chatSessionId": "sess_60d1b7f3-3e55-4142-a9bf-df8d71e941eb",
+        "timestamp": 1787754356441
+      }
+    ],
+    "2.8 Implement `deleteTask()` action with GraphQL mutation": [
+      {
+        "executionId": "109c5606-8f8b-4c24-85ea-08aee8f9d724",
+        "chatSessionId": "sess_60d1b7f3-3e55-4142-a9bf-df8d71e941eb",
+        "timestamp": 1787754099533
+      },
+      {
+        "executionId": "109c5606-8f8b-4c24-85ea-08aee8f9d724",
+        "chatSessionId": "sess_60d1b7f3-3e55-4142-a9bf-df8d71e941eb",
+        "timestamp": 1787754527175
+      }
+    ],
+    "2.5 Implement `updateTask()` action with GraphQL mutation": [
+      {
+        "executionId": "109c5606-8f8b-4c24-85ea-08aee8f9d724",
+        "chatSessionId": "sess_60d1b7f3-3e55-4142-a9bf-df8d71e941eb",
+        "timestamp": 1787754547328
+      }
+    ],
+    "3. Checkpoint - Core store logic": [
+      {
+        "executionId": "17f4f88c-9ca4-4006-87f6-312b0ad9bfde",
+        "chatSessionId": "sess_8a67040f-fdef-44e7-9b64-db95561bc1a2",
+        "timestamp": 1787757067252
+      }
+    ],
+    "4.1 Call `fetchTasks()` on HomeView mount": [
+      {
+        "executionId": "96403aac-4b09-4b5f-9d22-312ec6a0bb11",
+        "chatSessionId": "sess_69692a0e-4f8e-454c-b017-fd5b729b0c46",
+        "timestamp": 1787757147252
+      },
+      {
+        "executionId": "96403aac-4b09-4b5f-9d22-312ec6a0bb11",
+        "chatSessionId": "sess_69692a0e-4f8e-454c-b017-fd5b729b0c46",
+        "timestamp": 1787757322448
+      }
+    ],
+    "4.2 Ensure client-side filtering and sorting remain unchanged": [
+      {
+        "executionId": "96403aac-4b09-4b5f-9d22-312ec6a0bb11",
+        "chatSessionId": "sess_69692a0e-4f8e-454c-b017-fd5b729b0c46",
+        "timestamp": 1787757147289
+      },
+      {
+        "executionId": "96403aac-4b09-4b5f-9d22-312ec6a0bb11",
+        "chatSessionId": "sess_69692a0e-4f8e-454c-b017-fd5b729b0c46",
+        "timestamp": 1787757323308
+      }
+    ],
+    "4. Wire fetchTasks into View Lifecycle": [
+      {
+        "executionId": "96403aac-4b09-4b5f-9d22-312ec6a0bb11",
+        "chatSessionId": "sess_69692a0e-4f8e-454c-b017-fd5b729b0c46",
+        "timestamp": 1787757323345
+      }
+    ],
+    "5. Checkpoint - Integration wiring": [
+      {
+        "executionId": "a0fff535-4f39-4997-b4f7-084149921221",
+        "chatSessionId": "sess_48dba9bb-a6c7-455f-b0d2-dff51cfc7649",
+        "timestamp": 1787757426752
+      },
+      {
+        "executionId": "a0fff535-4f39-4997-b4f7-084149921221",
+        "chatSessionId": "sess_48dba9bb-a6c7-455f-b0d2-dff51cfc7649",
+        "timestamp": 1787757429727
+      }
+    ]
+  }
+}

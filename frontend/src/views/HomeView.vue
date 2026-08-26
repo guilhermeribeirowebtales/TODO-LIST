@@ -1,5 +1,24 @@
 <template>
   <v-container class="py-6">
+    <!-- Loading indicator while tasks are being fetched -->
+    <v-progress-linear
+      v-if="store.loading"
+      indeterminate
+      color="primary"
+      class="mb-4"
+    />
+
+    <!-- Error alert when an operation fails -->
+    <v-alert
+      v-if="store.error"
+      type="error"
+      closable
+      class="mb-4"
+      @click:close="store.error = null"
+    >
+      {{ store.error }}
+    </v-alert>
+
     <!-- FilterBar emits update:search and update:filter, and $event is Vue's emitted value.-->
     <!-- v-model:sort-by and v-model:priority-filter bind directly to the store refs so
          selecting an option in FilterBar writes straight into the store, triggering
@@ -81,15 +100,18 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useTaskStore } from "@/stores/taskStore";
 import draggable from "vuedraggable";
 import TaskCard from "@/components/tasks/TaskCard.vue";
 import FilterBar from "@/components/tasks/FilterBar.vue";
 import AddTaskButton from "@/components/tasks/AddTaskButton.vue";
-import { ref } from "vue";
 
 const store = useTaskStore();
+
+onMounted(() => {
+  store.fetchTasks();
+});
 
 const draggableTasks = computed({
   get: () => store.visibleTasks,
