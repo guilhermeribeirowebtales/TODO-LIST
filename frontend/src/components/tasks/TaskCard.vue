@@ -70,7 +70,7 @@
               :prepend-icon="
                 task.milestone ? 'mdi-calendar-check-outline' : 'mdi-calendar-plus-outline'
               "
-              :text="task.milestone ? formatDate(task.milestone) : 'Set date'"
+              :text="task.milestone ? task.milestone  : 'Set date'"
               variant="tonal"
               size="small"
               :color="task.milestone ? 'default' : 'secondary'"
@@ -163,13 +163,6 @@ function clearDate() {
 /** Sync localDate whenever the task prop changes (e.g. store update from outside) */
 function onMenuOpen() {
   localDate.value = props.task.milestone ?? "";
-}
-
-/** Format ISO date string to dd/mm/yyyy */
-function formatDate(dateStr) {
-  if (!dateStr) return null;
-  const [year, month, day] = dateStr.split("-");
-  return `${day}/${month}/${year}`;
 }
 </script>
 

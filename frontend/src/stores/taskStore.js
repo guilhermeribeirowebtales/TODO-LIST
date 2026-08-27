@@ -32,6 +32,14 @@ export const useTaskStore = defineStore("tasks", () => {
   const search = ref("");
 
   // --- HELPERS ---
+
+  /** Strips Apollo's __typename from an object so it can be safely assigned to reactive state. */
+  const stripTypename = (obj) => {
+    if (!obj || typeof obj !== "object") return obj;
+    const { __typename, ...rest } = obj;
+    return rest;
+  };
+
   const priorityWeights = {
     very_high: 3,
     high: 2,
@@ -109,7 +117,11 @@ export const useTaskStore = defineStore("tasks", () => {
    * @returns {'network' | 'auth' | 'business'}
    */
   function classifyError(err) {
-    if (err.networkError) return "network";
+    if (err.networkError) {
+      const status = err.networkError.statusCode;
+      if (status === 401 || status === 403) return "auth";
+      return "network";
+    }
 
     const gqlErrors = err.graphQLErrors || [];
     const isAuth = gqlErrors.some(
@@ -161,7 +173,7 @@ export const useTaskStore = defineStore("tasks", () => {
           },
         },
       });
-      tasks.value.push(data.createTask);
+      tasks.value.push(stripTypename(data.createTask));
     } catch (err) {
       handleError(err);
     } finally {
@@ -185,7 +197,7 @@ export const useTaskStore = defineStore("tasks", () => {
           input: fields,
         },
       });
-      Object.assign(task, data.updateTask);
+      Object.assign(task, stripTypename(data.updateTask));
     } catch (err) {
       Object.assign(task, previousState);
       handleError(err);
@@ -233,7 +245,7 @@ export const useTaskStore = defineStore("tasks", () => {
         query: GET_TASKS_QUERY,
         fetchPolicy: 'network-only',
       });
-      tasks.value = data.tasks;
+      tasks.value = data.getTasks.map(stripTypename);
     } catch (err) {
       handleError(err);
     } finally {

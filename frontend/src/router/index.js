@@ -41,7 +41,7 @@ router.beforeEach((to, from, next) => {
   const token = authStore.token;
   const isValid = authStore.verifyToken(token);
 
-  if (to.meta.requiresAuth && !token && !isValid) {
+  if (to.meta.requiresAuth && (!token || !isValid)) {
     next({ name: "login" });
   } else if (to.name === "login" && token && isValid) {
     next({ name: "home" });

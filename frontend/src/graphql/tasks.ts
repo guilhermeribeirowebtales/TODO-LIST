@@ -38,7 +38,7 @@ export const DELETE_TASK_MUTATION = gql`
 
 export const GET_TASKS_QUERY = gql`
   query GetTasks {
-    tasks {
+    getTasks {
       uuid
       title
       description

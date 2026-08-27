@@ -14,9 +14,9 @@ const router = useRouter();
 const store = useTaskStore();
 
 // Triggered when the form emits the 'submit' event
-function handleCreate(formData) {
+async function handleCreate(formData) {
   // Pass the data to your Pinia store action
-  store.addTask(formData);
+  await store.addTask(formData);
 
   // Navigate back to the main list (assuming your main route is named 'home')
   router.push({ name: "home" });

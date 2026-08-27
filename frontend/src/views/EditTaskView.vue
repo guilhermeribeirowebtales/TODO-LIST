@@ -33,8 +33,9 @@ const store = useTaskStore();
 // e.g. another tab edits the same task
 const task = store.getTaskById(route.params.id);
 
-function handleUpdate(formData) {
-  store.updateTask(route.params.id, formData);
+
+async function handleUpdate(formData) {
+  await store.updateTask(route.params.id, formData);
   router.push({ name: "home" });
 }
 
