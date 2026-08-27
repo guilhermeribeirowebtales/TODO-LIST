@@ -20,7 +20,6 @@ export const useAuthStore = defineStore(
     const token = ref(null);
     const user = ref({});
     const isAuthenticated = ref(false);
-    //const location = reactive({}); --> Dead Code
     const loginLoading = ref(false);
     const loginError = ref(null);
 
@@ -95,7 +94,6 @@ export const useAuthStore = defineStore(
       isAuthenticated,
       setToken,
       user,
-      location,
       token,
       setAuthenticated,
       cleanUser,

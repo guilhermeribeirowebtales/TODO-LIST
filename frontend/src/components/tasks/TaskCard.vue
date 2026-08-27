@@ -128,7 +128,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { PRIORITY_LEVELS } from "@/utils/constants";
 
@@ -143,8 +143,9 @@ const emit = defineEmits(["toggle-done", "toggle-archive", "delete", "update-mil
 
 const router = useRouter();
 
-const priority = PRIORITY_LEVELS[props.task.priority_level] ?? PRIORITY_LEVELS.normal;
-
+const priority = computed(
+  () => PRIORITY_LEVELS[props.task.priority_level] ?? PRIORITY_LEVELS.normal
+);
 // --- Milestone menu ---
 const menuOpen = ref(false);
 const localDate = ref(props.task.milestone ?? "");

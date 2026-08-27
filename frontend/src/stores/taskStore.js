@@ -310,15 +310,12 @@ export const useTaskStore = defineStore("tasks", () => {
   // Debounce + cancel: waits 300ms after the last filter/sort change,
   // then fires fetchTasks which cancels any previous in-flight request.
   let debounceTimer = null;
-  watch(
-    [activeFilter, sortBy, priorityFilter, search],
-    () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        fetchTasks();
-      }, 300);
-    },
-  );
+  let initialized = false;
+  watch([activeFilter, sortBy, priorityFilter, search], () => {
+    if (!initialized) { initialized = true; return; }
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => fetchTasks(), 300);
+  });
 
   return {
     // State
