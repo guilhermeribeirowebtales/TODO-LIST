@@ -98,7 +98,6 @@ export const useTaskStore = defineStore("tasks", () => {
   // --- ERROR HANDLING ---
 
   function classifyError(err) {
-    // Guard: if it's not an Apollo error, treat as business
     if (!err || typeof err !== "object") return "business";
 
     if (err.networkError) {
@@ -134,7 +133,6 @@ export const useTaskStore = defineStore("tasks", () => {
       return;
     }
 
-    // business or unknown error
     error.value =
       err.graphQLErrors?.[0]?.message ||
       err.message ||
@@ -142,6 +140,10 @@ export const useTaskStore = defineStore("tasks", () => {
   }
 
   // --- ACTIONS ---
+
+  /** Tracks the current in-flight fetch so we can cancel it when a newer one starts. */
+  let activeFetchController = null;
+
   async function addTask({ title, description = "", milestone = null, priority_level = "normal" }) {
     operationLoading.value["create"] = true;
     error.value = null;
@@ -222,7 +224,19 @@ export const useTaskStore = defineStore("tasks", () => {
     }
   }
 
+  /**
+   * Fetches tasks from the server with current filter/sort.
+   * Cancels any in-flight fetch so only the latest request wins.
+   */
   async function fetchTasks() {
+    // Cancel previous in-flight request
+    if (activeFetchController) {
+      activeFetchController.abort();
+    }
+
+    const controller = new AbortController();
+    activeFetchController = controller;
+
     loading.value = true;
     error.value = null;
     try {
@@ -231,13 +245,27 @@ export const useTaskStore = defineStore("tasks", () => {
         query: GET_TASKS_QUERY,
         variables,
         fetchPolicy: "network-only",
+        context: { fetchOptions: { signal: controller.signal } },
       });
-      const result = data?.tasks;
-      tasks.value = Array.isArray(result) ? result.map(stripTypename) : [];
+
+      // Only apply result if this is still the active request
+      // Race Guard that ensures that even if the abort doesn't propagate fast enough, a stale response never overwrites a newer one.
+      if (activeFetchController === controller) {
+        const result = data?.tasks;
+        tasks.value = Array.isArray(result) ? result.map(stripTypename) : [];
+      }
     } catch (err) {
+      // Ignore aborted requests — a newer fetch replaced this one
+      if (err.name === "AbortError" || controller.signal.aborted) {
+        return;
+      }
       handleError(err);
     } finally {
-      loading.value = false;
+      // Only clear loading if this is still the active request
+      if (activeFetchController === controller) {
+        loading.value = false;
+        activeFetchController = null;
+      }
     }
   }
 
@@ -279,7 +307,8 @@ export const useTaskStore = defineStore("tasks", () => {
   }
 
   // --- WATCHERS ---
-  // Re-fetch from server whenever filter/sort criteria change (debounced)
+  // Debounce + cancel: waits 300ms after the last filter/sort change,
+  // then fires fetchTasks which cancels any previous in-flight request.
   let debounceTimer = null;
   watch(
     [activeFilter, sortBy, priorityFilter, search],
