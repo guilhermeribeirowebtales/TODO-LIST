@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { defineStore } from "pinia";
 import router from "../router/index.js";
 import { useAuthStore } from "./authStore";
@@ -7,28 +7,13 @@ import { GET_TASKS_QUERY, CREATE_TASK_MUTATION, DELETE_TASK_MUTATION, UPDATE_TAS
 
 export const useTaskStore = defineStore("tasks", () => {
   // --- STATE ---
-  /** @type {import('vue').Ref<Array<{ uuid: string, title: string, description: string, milestone: string|null, priority_level: 'normal'|'high'|'very_high', order_id: number, is_done: boolean, is_archived: boolean }>>} */
   const tasks = ref([]);
-
-  /** @type {import('vue').Ref<boolean>} */
   const loading = ref(false);
-
-  /** @type {import('vue').Ref<Record<string, boolean>>} */
   const operationLoading = ref({});
-
-  /** @type {import('vue').Ref<string|null>} */
   const error = ref(null);
-
-  /** @type {import('vue').Ref<'manual'|'milestone_asc'|'milestone_desc'|'priority_asc'|'priority_desc'>} */
   const sortBy = ref("manual");
-
-  /** @type {import('vue').Ref<Array<'normal'|'high'|'very_high'>>} */
   const priorityFilter = ref([]);
-
-  /** @type {import('vue').Ref<'all'|'done'|'undone'|'archived'>} */
   const activeFilter = ref("all");
-
-  /** @type {import('vue').Ref<string>} */
   const search = ref("");
 
   // --- HELPERS ---
@@ -40,83 +25,82 @@ export const useTaskStore = defineStore("tasks", () => {
     return rest;
   };
 
-  const priorityWeights = {
-    very_high: 3,
-    high: 2,
-    normal: 1,
-  };
+  /**
+   * Maps frontend filter/sort state to backend GraphQL variables.
+   */
+  function buildQueryVariables() {
+    const filter = {};
+    const sort = {};
 
-  /** Applies the current priority filter and sorting logic to an array of tasks */
-  const applyFiltersAndSort = (taskList) => {
-    let processedList = taskList;
-    if (priorityFilter.value.length > 0) {
-      processedList = processedList.filter((t) =>
-        priorityFilter.value.includes(t.priority_level),
-      );
+    switch (activeFilter.value) {
+      case "done":
+        filter.is_done = true;
+        filter.is_archived = false;
+        break;
+      case "undone":
+        filter.is_done = false;
+        filter.is_archived = false;
+        break;
+      case "archived":
+        filter.is_archived = true;
+        break;
+      case "all":
+      default:
+        filter.is_archived = false;
+        break;
     }
 
-    return [...processedList].sort((a, b) => {
-      if (sortBy.value === "milestone_asc") {
-        if (!a.milestone) return 1;
-        if (!b.milestone) return -1;
-        return new Date(a.milestone) - new Date(b.milestone);
-      }
-      if (sortBy.value === "milestone_desc") {
-        if (!a.milestone) return 1;
-        if (!b.milestone) return -1;
-        return new Date(b.milestone) - new Date(a.milestone);
-      }
-      if (sortBy.value === "priority_desc") {
-        return priorityWeights[b.priority_level] - priorityWeights[a.priority_level];
-      }
-      if (sortBy.value === "priority_asc") {
-        return priorityWeights[a.priority_level] - priorityWeights[b.priority_level];
-      }
-
-      return a.order_id - b.order_id;
-    });
-  };
-
-  // --- GETTERS ---
-  const activeTasks = computed(() => {
-    const active = tasks.value.filter((t) => !t.is_archived);
-    return applyFiltersAndSort(active);
-  });
-
-  const archivedTasks = computed(() => {
-    const archived = tasks.value.filter((t) => t.is_archived);
-    return applyFiltersAndSort(archived);
-  });
-
-  /** The final task list for the view, driven by activeFilter and search */
-  const visibleTasks = computed(() => {
-    let list = activeFilter.value === "archived" ? archivedTasks.value : activeTasks.value;
-
-    if (activeFilter.value === "done") list = list.filter((t) => t.is_done);
-    if (activeFilter.value === "undone") list = list.filter((t) => !t.is_done);
+    if (priorityFilter.value.length > 0) {
+      filter.priority_level = [...priorityFilter.value];
+    }
 
     if (search.value.trim()) {
-      const q = search.value.trim().toLowerCase();
-      list = list.filter(
-        (t) => t.title.toLowerCase().includes(q) || t.description?.toLowerCase().includes(q),
-      );
+      filter.search = search.value.trim();
     }
 
-    return list;
-  });
+    switch (sortBy.value) {
+      case "priority_desc":
+        sort.field = "priority";
+        sort.direction = "DESC";
+        break;
+      case "priority_asc":
+        sort.field = "priority";
+        sort.direction = "ASC";
+        break;
+      case "milestone_asc":
+        sort.field = "milestone";
+        sort.direction = "ASC";
+        break;
+      case "milestone_desc":
+        sort.field = "milestone";
+        sort.direction = "DESC";
+        break;
+      case "manual":
+      default:
+        sort.field = "manual";
+        sort.direction = "ASC";
+        break;
+    }
+
+    return {
+      filter: Object.keys(filter).length > 0 ? filter : undefined,
+      sort,
+    };
+  }
+
+  // --- GETTERS ---
+  const visibleTasks = computed(() => tasks.value);
 
   const getTaskById = (uuid) => {
     return tasks.value.find((t) => t.uuid === uuid) ?? null;
   };
 
-  // --- ERROR HANDLING (internal) ---
+  // --- ERROR HANDLING ---
 
-  /**
-   * Classifies an Apollo error into network, auth, or business category.
-   * @param {import('@apollo/client').ApolloError} err
-   * @returns {'network' | 'auth' | 'business'}
-   */
   function classifyError(err) {
+    // Guard: if it's not an Apollo error, treat as business
+    if (!err || typeof err !== "object") return "business";
+
     if (err.networkError) {
       const status = err.networkError.statusCode;
       if (status === 401 || status === 403) return "auth";
@@ -133,11 +117,9 @@ export const useTaskStore = defineStore("tasks", () => {
     return "business";
   }
 
-  /**
-   * Handles a classified error: redirects on auth errors, sets user-readable messages otherwise.
-   * @param {import('@apollo/client').ApolloError} err
-   */
   function handleError(err) {
+    console.error("[taskStore] Error caught:", err);
+
     const kind = classifyError(err);
 
     if (kind === "auth") {
@@ -152,17 +134,19 @@ export const useTaskStore = defineStore("tasks", () => {
       return;
     }
 
-    // business error
+    // business or unknown error
     error.value =
-      err.graphQLErrors?.[0]?.message || "An unexpected error occurred.";
+      err.graphQLErrors?.[0]?.message ||
+      err.message ||
+      "An unexpected error occurred.";
   }
 
   // --- ACTIONS ---
   async function addTask({ title, description = "", milestone = null, priority_level = "normal" }) {
-    operationLoading.value['create'] = true;
+    operationLoading.value["create"] = true;
     error.value = null;
     try {
-      const { data } = await apolloClient.mutate({
+      await apolloClient.mutate({
         mutation: CREATE_TASK_MUTATION,
         variables: {
           input: {
@@ -173,11 +157,11 @@ export const useTaskStore = defineStore("tasks", () => {
           },
         },
       });
-      tasks.value.push(stripTypename(data.createTask));
+      await fetchTasks();
     } catch (err) {
       handleError(err);
     } finally {
-      operationLoading.value['create'] = false;
+      operationLoading.value["create"] = false;
     }
   }
 
@@ -216,6 +200,7 @@ export const useTaskStore = defineStore("tasks", () => {
     const task = tasks.value.find((t) => t.uuid === uuid);
     if (!task) return;
     await updateTask(uuid, { is_archived: !task.is_archived });
+    await fetchTasks();
   }
 
   async function deleteTask(uuid) {
@@ -241,11 +226,14 @@ export const useTaskStore = defineStore("tasks", () => {
     loading.value = true;
     error.value = null;
     try {
+      const variables = buildQueryVariables();
       const { data } = await apolloClient.query({
         query: GET_TASKS_QUERY,
-        fetchPolicy: 'network-only',
+        variables,
+        fetchPolicy: "network-only",
       });
-      tasks.value = data.getTasks.map(stripTypename);
+      const result = data?.tasks;
+      tasks.value = Array.isArray(result) ? result.map(stripTypename) : [];
     } catch (err) {
       handleError(err);
     } finally {
@@ -254,19 +242,17 @@ export const useTaskStore = defineStore("tasks", () => {
   }
 
   async function reorderTasks(orderedUuids) {
-    // Save previous order for revert
     const previousOrders = {};
     tasks.value.forEach((t) => {
       previousOrders[t.uuid] = t.order_id;
     });
 
-    // Optimistic: update order_id values immediately
     orderedUuids.forEach((uuid, index) => {
       const task = tasks.value.find((t) => t.uuid === uuid);
       if (task) task.order_id = index;
     });
 
-    operationLoading.value['reorder'] = true;
+    operationLoading.value["reorder"] = true;
     error.value = null;
     try {
       await Promise.all(
@@ -277,11 +263,10 @@ export const useTaskStore = defineStore("tasks", () => {
               id: uuid,
               input: { order_id: index },
             },
-          })
-        )
+          }),
+        ),
       );
     } catch (err) {
-      // Revert to previous order
       tasks.value.forEach((t) => {
         if (previousOrders[t.uuid] !== undefined) {
           t.order_id = previousOrders[t.uuid];
@@ -289,9 +274,22 @@ export const useTaskStore = defineStore("tasks", () => {
       });
       handleError(err);
     } finally {
-      operationLoading.value['reorder'] = false;
+      operationLoading.value["reorder"] = false;
     }
   }
+
+  // --- WATCHERS ---
+  // Re-fetch from server whenever filter/sort criteria change (debounced)
+  let debounceTimer = null;
+  watch(
+    [activeFilter, sortBy, priorityFilter, search],
+    () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        fetchTasks();
+      }, 300);
+    },
+  );
 
   return {
     // State
@@ -314,7 +312,7 @@ export const useTaskStore = defineStore("tasks", () => {
     toggleArchive,
     deleteTask,
     reorderTasks,
-    // Error handling (internal, exposed for testability)
+    // Error handling (exposed for testability)
     classifyError,
     handleError,
   };

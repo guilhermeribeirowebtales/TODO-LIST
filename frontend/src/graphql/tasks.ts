@@ -32,13 +32,17 @@ export const UPDATE_TASK_MUTATION = gql`
 
 export const DELETE_TASK_MUTATION = gql`
   mutation DeleteTask($id: ID!) {
-    deleteTask(id: $id)
+    deleteTask(id: $id) {
+      message
+      status
+      success
+    }
   }
 `
 
 export const GET_TASKS_QUERY = gql`
-  query GetTasks {
-    getTasks {
+  query GetTasks($filter: TaskFilterInput, $sort: TaskSortInput) {
+    tasks(filter: $filter, sort: $sort) {
       uuid
       title
       description
