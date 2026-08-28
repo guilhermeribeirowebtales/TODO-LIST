@@ -1,0 +1,62 @@
+import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
+import HomeView from "../views/HomeView.vue";
+
+const routes = [
+  {
+    path: "/",
+    name: "home",
+    component: HomeView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/task/new",
+    name: "task-new",
+    component: () => import("../views/NewTaskView.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/task/:id/edit", //Alterar url e colocar campos variaveis ou de id no final
+    name: "task-edit",
+    component: () => import("../views/EditTaskView.vue"), //This notation is called lazy import
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/auth/login",
+    name: "login",
+    component: () => import("../components/forms/LoginForm.vue"),
+  },
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+//Verificar se o token expirou com a chave publica etc
+//porque e possivel colocar um token qualquer e entrar
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+  const token = authStore.token;
+  const isValid = authStore.verifyToken(token);
+
+  if (to.meta.requiresAuth && (!token || !isValid)) {
+    next({ name: "login" });
+  } else if (to.name === "login" && token && isValid) {
+    next({ name: "home" });
+  } else {
+    next();
+  }
+});
+
+export default router;
+
+//This page is where we define routes more specifically the url paths
+//followed by the name which is what we'll use to reference this route in our code, like in a push
+// and last the component which is essencially the View we created and the one we want the user to see.
+//Here we also define the createWebHistory which cleans URL's removing #, increases SEO
+
+//You can see that for the HomeView we import the component on top, but for the NewTaskView and for EditTaskView we use Lazy import
+//This makes the Home View load eagerly, but NewTaskView and EditTaskView are only downloaded when first visited, saving the user RAM while browsing the website
+//This doesn't make a lot of difference but it's a good practice to keep for larger projects where there will be a lot of views.
