@@ -90,7 +90,7 @@ const filters = [
 
 //SortBy Filters
 const sort_filters = [
-  { label: "Default (drag & drop)", value: "manual" },
+  { label: "Default (Drag & Drop)", value: "manual" },
   { label: "Priority (High to Low)", value: "priority_desc" },
   { label: "Priority (Low to High)", value: "priority_asc" },
   { label: "Milestone (Earliest first)", value: "milestone_asc" },

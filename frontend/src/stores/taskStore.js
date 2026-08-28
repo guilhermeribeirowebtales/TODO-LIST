@@ -3,7 +3,12 @@ import { defineStore } from "pinia";
 import router from "../router/index.js";
 import { useAuthStore } from "./authStore";
 import { apolloClient } from "../apollo";
-import { GET_TASKS_QUERY, CREATE_TASK_MUTATION, DELETE_TASK_MUTATION, UPDATE_TASK_MUTATION } from "../graphql/tasks";
+import {
+  GET_TASKS_QUERY,
+  CREATE_TASK_MUTATION,
+  DELETE_TASK_MUTATION,
+  UPDATE_TASK_MUTATION,
+} from "../graphql/tasks";
 
 export const useTaskStore = defineStore("tasks", () => {
   // --- STATE ---
@@ -108,8 +113,7 @@ export const useTaskStore = defineStore("tasks", () => {
 
     const gqlErrors = err.graphQLErrors || [];
     const isAuth = gqlErrors.some(
-      (e) =>
-        e.extensions?.code === "UNAUTHENTICATED" || e.extensions?.code === "FORBIDDEN",
+      (e) => e.extensions?.code === "UNAUTHENTICATED" || e.extensions?.code === "FORBIDDEN",
     );
     if (isAuth) return "auth";
 
@@ -133,10 +137,7 @@ export const useTaskStore = defineStore("tasks", () => {
       return;
     }
 
-    error.value =
-      err.graphQLErrors?.[0]?.message ||
-      err.message ||
-      "An unexpected error occurred.";
+    error.value = err.graphQLErrors?.[0]?.message || err.message || "An unexpected error occurred.";
   }
 
   // --- ACTIONS ---
@@ -168,6 +169,7 @@ export const useTaskStore = defineStore("tasks", () => {
   }
 
   async function updateTask(uuid, fields) {
+    if (!uuid) return;
     const task = tasks.value.find((t) => t.uuid === uuid);
     if (!task) return;
 
@@ -206,6 +208,7 @@ export const useTaskStore = defineStore("tasks", () => {
   }
 
   async function deleteTask(uuid) {
+    if (!uuid) return;
     operationLoading.value[uuid] = true;
     error.value = null;
     try {
@@ -241,10 +244,11 @@ export const useTaskStore = defineStore("tasks", () => {
     error.value = null;
     try {
       const variables = buildQueryVariables();
-      const { data } = await apolloClient.query({
+      const { data, errors } = await apolloClient.query({
         query: GET_TASKS_QUERY,
         variables,
         fetchPolicy: "network-only",
+        errorPolicy: "all",
         context: { fetchOptions: { signal: controller.signal } },
       });
 
@@ -252,7 +256,15 @@ export const useTaskStore = defineStore("tasks", () => {
       // Race Guard that ensures that even if the abort doesn't propagate fast enough, a stale response never overwrites a newer one.
       if (activeFetchController === controller) {
         const result = data?.tasks;
-        tasks.value = Array.isArray(result) ? result.map(stripTypename) : [];
+        // Filter out null entries and tasks with missing uuid (corrupt data)
+        tasks.value = Array.isArray(result)
+          ? result.filter((t) => t?.uuid).map(stripTypename)
+          : [];
+
+        // Show partial errors in the snackbar without discarding valid data
+        if (errors?.length) {
+          error.value = errors.map((e) => e.message).join("; ");
+        }
       }
     } catch (err) {
       // Ignore aborted requests — a newer fetch replaced this one
@@ -310,9 +322,7 @@ export const useTaskStore = defineStore("tasks", () => {
   // Debounce + cancel: waits 300ms after the last filter/sort change,
   // then fires fetchTasks which cancels any previous in-flight request.
   let debounceTimer = null;
-  let initialized = false;
   watch([activeFilter, sortBy, priorityFilter, search], () => {
-    if (!initialized) { initialized = true; return; }
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => fetchTasks(), 300);
   });

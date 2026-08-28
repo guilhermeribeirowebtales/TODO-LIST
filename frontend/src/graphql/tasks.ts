@@ -32,7 +32,7 @@ export const UPDATE_TASK_MUTATION = gql`
 
 export const DELETE_TASK_MUTATION = gql`
   mutation DeleteTask($id: ID!) {
-    deleteTask(id: $id) {
+    deleteTask(uuid: $id) {
       message
       status
       success
@@ -51,6 +51,7 @@ export const GET_TASKS_QUERY = gql`
       order_id
       is_done
       is_archived
+      total_caracters
     }
   }
 `

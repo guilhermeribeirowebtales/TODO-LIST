@@ -29,6 +29,7 @@
       <div class="task-card__content flex-grow-1 d-flex flex-column">
         <div class="d-flex align-center ga-2 flex-wrap">
           <span
+            v-if="task.title"
             :class="[
               'task-card__title',
               'text-body-2',
@@ -38,9 +39,11 @@
           >
             {{ task.title }}
           </span>
-          <v-chip :color="priority.color" size="x-small" variant="tonal" class="flex-shrink-0 ml-2">
+
+          <v-chip v-if="priority" :color="priority.color" size="x-small" variant="tonal" class="flex-shrink-0 ml-2">
             {{ priority.label }}
           </v-chip>
+
         </div>
 
         <p
@@ -70,7 +73,7 @@
               :prepend-icon="
                 task.milestone ? 'mdi-calendar-check-outline' : 'mdi-calendar-plus-outline'
               "
-              :text="task.milestone ? task.milestone  : 'Set date'"
+              :text="task.milestone ? task.milestone : 'Set date'"
               variant="tonal"
               size="small"
               :color="task.milestone ? 'default' : 'secondary'"
@@ -144,7 +147,7 @@ const emit = defineEmits(["toggle-done", "toggle-archive", "delete", "update-mil
 const router = useRouter();
 
 const priority = computed(
-  () => PRIORITY_LEVELS[props.task.priority_level] ?? PRIORITY_LEVELS.normal
+  () => PRIORITY_LEVELS[props.task.priority_level] ?? PRIORITY_LEVELS.normal,
 );
 // --- Milestone menu ---
 const menuOpen = ref(false);
