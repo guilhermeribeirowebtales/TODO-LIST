@@ -55,3 +55,12 @@ export const GET_TASKS_QUERY = gql`
     }
   }
 `
+
+export const REORDER_TASKS_MUTATION = gql`
+  mutation ReorderTasks($orderedUuids: [ID!]!) {
+    reorderTasks(orderedUuids: $orderedUuids) {
+      success
+      message
+    }
+  }
+`

@@ -8,6 +8,7 @@ import {
   CREATE_TASK_MUTATION,
   DELETE_TASK_MUTATION,
   UPDATE_TASK_MUTATION,
+  REORDER_TASKS_MUTATION,
 } from "../graphql/tasks";
 
 export const useTaskStore = defineStore("tasks", () => {
@@ -257,9 +258,7 @@ export const useTaskStore = defineStore("tasks", () => {
       if (activeFetchController === controller) {
         const result = data?.tasks;
         // Filter out null entries and tasks with missing uuid (corrupt data)
-        tasks.value = Array.isArray(result)
-          ? result.filter((t) => t?.uuid).map(stripTypename)
-          : [];
+        tasks.value = Array.isArray(result) ? result.filter((t) => t?.uuid).map(stripTypename) : [];
 
         // Show partial errors in the snackbar without discarding valid data
         if (errors?.length) {
@@ -282,36 +281,29 @@ export const useTaskStore = defineStore("tasks", () => {
   }
 
   async function reorderTasks(orderedUuids) {
-    const previousOrders = {};
-    tasks.value.forEach((t) => {
-      previousOrders[t.uuid] = t.order_id;
-    });
+    // Save previous state for revert
+    const previousTasks = [...tasks.value];
 
-    orderedUuids.forEach((uuid, index) => {
-      const task = tasks.value.find((t) => t.uuid === uuid);
-      if (task) task.order_id = index;
-    });
+    // Optimistic: reorder the tasks array to match the drag order
+    const reordered = orderedUuids
+      .map((uuid, index) => {
+        const task = tasks.value.find((t) => t.uuid === uuid);
+        if (task) task.order_id = index;
+        return task;
+      })
+      .filter(Boolean);
+    tasks.value = reordered;
 
     operationLoading.value["reorder"] = true;
     error.value = null;
     try {
-      await Promise.all(
-        orderedUuids.map((uuid, index) =>
-          apolloClient.mutate({
-            mutation: UPDATE_TASK_MUTATION,
-            variables: {
-              id: uuid,
-              input: { order_id: index },
-            },
-          }),
-        ),
-      );
-    } catch (err) {
-      tasks.value.forEach((t) => {
-        if (previousOrders[t.uuid] !== undefined) {
-          t.order_id = previousOrders[t.uuid];
-        }
+      await apolloClient.mutate({
+        mutation: REORDER_TASKS_MUTATION,
+        variables: { orderedUuids },
       });
+      await fetchTasks();
+    } catch (err) {
+      tasks.value = previousTasks;
       handleError(err);
     } finally {
       operationLoading.value["reorder"] = false;
